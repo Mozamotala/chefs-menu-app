@@ -1,10 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from './navigation';
 
 
 export default function App() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
   const [name, setName] = useState('');
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
@@ -39,15 +44,29 @@ export default function App() {
     }
   };
     
+  useEffect(() => {
+    const loadSavedDishes = async () => {
+      const savedData = await AsyncStorage.getItem('@dishes');
+      if (savedData !== null) {
+        setMenuItems(JSON.parse(savedData));
+      }
+    };
+    loadSavedDishes();
+  }, []);
+
+
   // Computes search values dynamically instantly across full rendering phases
   const displayedItems = menuItems.filter((dish) =>
     dish.name.toLowerCase().includes(searchItem.toLowerCase().trim())
   );
     // Handles removing a single item permanently by its ID
-  const deleteMenuItem = (idToDestroy: string) => {
-    // Filter out the specific dish from the array
+  const deleteMenuItem = async (idToDestroy: string) => {
+    // 1. Filter out the specific dish from the array
     const updatedList = menuItems.filter((item) => item.id !== idToDestroy);
+    
+    // 2. Update screen state and overwrite storage disk files
     setMenuItems(updatedList);
+    await AsyncStorage.setItem('@dishes', JSON.stringify(updatedList));
   };
 
 
@@ -93,7 +112,7 @@ export default function App() {
 
                         <TouchableOpacity 
               style={styles.submitButton}
-              onPress={() => {
+              onPress={async () => { // 1. Added "async" here
                 if (!name.trim()) { alert('Please enter the name of the dish.'); return; }
                 if (!time.trim()) { alert('Please enter the time to cook.'); return; }
                 if (!description.trim()) { alert('Please enter a description.'); return; }
@@ -122,6 +141,7 @@ export default function App() {
                   ); 
                   
                   setMenuItems(updatedList);
+                  await AsyncStorage.setItem('@dishes', JSON.stringify(updatedList));
                   clearForm();
                 } else {
                   
@@ -141,6 +161,8 @@ export default function App() {
                   setDescription('');
                   setPrice('');
                   setDishType('');
+                  
+                  await AsyncStorage.setItem('@dishes', JSON.stringify(updatedList));
                 }
               }} 
             >
@@ -207,6 +229,15 @@ export default function App() {
             {searchItem !== '' && displayedItems.length === 0 && (
               <Text style={styles.emptyText}>No matching dishes found.</Text>
             )}
+
+            <TouchableOpacity 
+            style={styles.detailsButton}
+            onPress={() => {
+              navigation.navigate('Details', { menuItems });
+            }}
+          >
+          <Text style={styles.detailsButtonText}>Details</Text>
+        </TouchableOpacity>
 
           </View>
         </ScrollView>
@@ -351,6 +382,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  detailsButton: {
+    backgroundColor: '#28a745',
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  detailsButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },

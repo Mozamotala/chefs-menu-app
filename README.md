@@ -18,6 +18,7 @@ The app code is in the [`cheff-app-v3`](./cheff-app-v3) folder.
   - the name, time, description, price and dish type are all required
   - the price must be a number greater than 0
 - A success message ("Dish added successfully!") after a dish is saved.
+- A price check: if the price is over R400, the chef is asked to confirm it and can press Cancel to change it or Continue to save the dish anyway.
 - The menu list updates straight away when a dish is added, and the list is saved on the device with AsyncStorage, so it is still there when the app is reopened.
 - A summary line showing the number of dishes, the total price and the average price.
 - A Details screen (opened with the **Details** button) that groups dishes by type and shows a count and average price for each type.
@@ -136,13 +137,55 @@ Each card is given `key={item.id}`. React needs a unique key on every item in a 
 
 Whenever `displayedItems` changes (a dish is added, edited or deleted, or the search text changes), React runs the `.map` again from the start and redraws the list with the new data.
 
+### Confirming a high price
+
+I wanted the app to warn the chef when a price looks too high, but not to block it, because a dish over R400 is still possible. My first attempt was:
+
+```tsx
+if (!price || Number(price) > 400) { alert('Are you sure about the price?'); return; continue; }
+```
+
+This did not work, and I used an AI assistant (Claude) to help me understand why. What I learned:
+
+- `continue` only works inside a loop, so it caused an error here. It also came after `return`, so it could never have run.
+- `alert()` can only show a message with an OK button. It cannot give the user a choice, so it could not offer "go back" or "carry on".
+- `!price` was in the same check, so an empty price showed "Are you sure about the price?" instead of "Please enter a price".
+
+The fix in `Home.tsx`:
+
+1. The checks for an empty price and for a valid number now run first.
+2. If the price is over 400, the app shows a pop-up with two buttons, **Cancel** and **Continue**, and waits for the answer:
+   - **Continue** saves the dish as normal, so the chef is not stuck with a R400 limit.
+   - **Cancel** saves nothing and keeps the form filled in so the price can be changed.
+3. `Alert` was added to the `react-native` import. On the web, the browser's built-in `confirm` box is used instead, because `Alert.alert` buttons do not work in a browser.
+
+### Fixing the misaligned summary text
+
+The summary above the menu list showed up misaligned: "Total" and "Avg" were pushed to the right of "Menu Items". I could not work out why, so I asked Claude Code (the Claude assistant inside my code editor). Claude Code does not have a share-chat link, so I have saved screenshots of the conversation in the [`screenshots`](./screenshots) folder.
+
+![The misaligned summary text](./screenshots/ai-help-1-misaligned-summary.png)
+
+![Claude Code explaining the cause](./screenshots/ai-help-2-claude-code-explanation.png)
+
+![Asking Claude Code to explain the fixes line by line](./screenshots/ai-help-3-line-by-line-request.png)
+
+**The cause:** the text was written as a template string (text inside backticks) that continued over several lines. A template string keeps everything exactly as typed, so the spaces I used to indent the code ended up inside the text itself and pushed "Total" and "Avg" to the right.
+
+**The fix:** the text is now written on one line, with `\n` marking where each new line starts. The result is `Menu Items (3)`, then `Total: R50.00`, then `Avg: R16.67`, all lined up.
+
+```tsx
+`Menu Items (${menuItems.length})\nTotal: R${totalPrice.toFixed(2)}\nAvg: R${averagePrice.toFixed(2)}`
+```
+
+After the fix I asked Claude Code to explain each change line by line so that I understood it, and not only copied the answer.
+
 ## Video demonstration
 
 YouTube (Unlisted): _add your link here_
 
 ## References
 
-I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages. The installation steps came from the official documentation for each package. I also used a Google search to find the command for installing the splash screen. The app icon and loading screen image were generated with the help of Grok, and I used Claude as a coding and learning aid and to help format my work and understand the assignment brief.
+I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages. The installation steps came from the official documentation for each package. I also used a Google search to find the command for installing the splash screen. The app icon and loading screen image were generated with the help of Grok, and I used Claude as a coding and learning aid (for example, to understand and fix the price confirmation and the misaligned summary text described above) and to help format my work and understand the assignment brief.
 
 - Google (2026) Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. Available at: https://www.google.com (Accessed: 11 October 2026).
 - React Navigation (n.d.) *Getting started*. Available at: https://reactnavigation.org/docs/getting-started (Accessed: 11 October 2026).
@@ -152,3 +195,4 @@ I used Google to find out how to install and set up the AsyncStorage, Picker and
 - Google (2026) *what is the command to install the splash screen on react native* [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native (Accessed: 11 October 2026).
 - Anthropic (2026) *Claude* [Generative AI tool]. Used as a coding and learning aid while building the app. Available at: https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e (Accessed: 11 October 2026).
 - Anthropic (2026) *Claude* [Generative AI tool]. Used to help format my work and to understand the assignment brief. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 (Accessed: 11 October 2026).
+- Anthropic (2026) *Claude Code* [Generative AI tool]. Used to find and understand the cause of the misaligned summary text and the price confirmation fix. Screenshots of the conversation are saved in the `screenshots` folder of this repository (Accessed: 11 October 2026).

@@ -4,6 +4,7 @@ import { RootStackParamList } from './navigation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
+// the 4 categories - value matches what the Picker saves, label is what we show
 const dishTypes = [
   { value: 'appetizer', label: 'Appetizer' },
   { value: 'mainCourse', label: 'Main Course' },
@@ -11,7 +12,9 @@ const dishTypes = [
   { value: 'beverage', label: 'Beverage' },
 ];
 
+// second page: shows all dishes grouped by category
 export default function Details({ route }: Props) {
+  // grab the dishes that Home sent over
   const { menuItems } = route.params;
 
   const totalItems = menuItems.length;
@@ -25,7 +28,9 @@ export default function Details({ route }: Props) {
         <Text style={styles.itemDetailText}>Total value: R{totalPrice.toFixed(2)}</Text>
       </View>
 
+      {/* make one card per category */}
       {dishTypes.map((type) => {
+        // only the dishes in this category, plus their avg price
         const dishes = menuItems.filter((item) => item.dishType === type.value);
         const total = dishes.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
         const average = dishes.length > 0 ? total / dishes.length : 0;

@@ -58,10 +58,97 @@ Navigation uses React Navigation (native stack): Home → Details.
    ```
 5. Scan the QR code with Expo Go, or press `a` to open it on an Android emulator.
 
+## How the code works
+
+This section explains the main ideas behind the search box and the menu list in `Home.tsx`.
+
+### Searching the menu
+
+1. **A state variable stores what the chef types.** `const [searchItem, setSearchItem] = useState('');` creates it, and it starts as an empty string.
+2. **The search box keeps that state up to date.** The `TextInput` is given `value={searchItem}` and `onChangeText={(text) => setSearchItem(text)}`. Each time a key is pressed, `setSearchItem` saves the new text. Changing state makes React run the component again (a re-render), so the screen always shows the latest results.
+3. **`.filter` builds the list that is shown.**
+
+   ```tsx
+   const displayedItems = menuItems.filter((dish) =>
+     dish.name.toLowerCase().includes(searchItem.toLowerCase().trim())
+   );
+   ```
+
+   `.filter` goes through the dishes one at a time and asks a yes/no question about each one: does this dish's name contain the search text? Dishes that answer yes are kept and the rest are left out. In this code:
+   - `.toLowerCase()` is applied to both the name and the search text, so capital letters are ignored ("pasta" still finds "Pasta").
+   - `.trim()` removes spaces from the start and end of the search text.
+   - `.includes(...)` is true when the search text appears anywhere in the name.
+
+   When the search box is empty, every name contains an empty string, so every dish is kept.
+
+How it all fits together:
+
+```
+type "pa" → setSearchItem("pa") → component re-renders
+          → filter keeps only names containing "pa"
+          → displayedItems = [Pasta, Paella]
+          → .map draws a card for each
+```
+
+The full list (`menuItems`) is never changed by a search. Each re-render only creates a temporary filtered copy.
+
+### Showing a message when the list is empty
+
+The list uses a ternary operator, which is a short if/else that returns a value:
+
+```
+condition ? valueIfTrue : valueIfFalse
+```
+
+Because it is an expression, it can sit directly inside the JSX. React gets exactly one thing to display:
+
+```tsx
+{displayedItems.length === 0 ? (          // is there nothing to show?
+  <Text>...message...</Text>              // yes → show a message
+) : (                                     // no → ...
+  displayedItems.map((item) => (...card...))   // ...show one card per dish
+)}
+```
+
+If the list is empty, a single message is shown ("No matching dishes found." during a search, or "No menu items available. Please add a new dish." when the menu is empty). Otherwise React shows the array of cards created by `.map`. The brackets around each branch are only there so the code is easier to read.
+
+### Drawing the cards with `.map`
+
+`.map` is a built-in array method. It goes through the array one item at a time, runs a function on each item, and returns a new array made of the results. The original array is not changed.
+
+```ts
+const prices = [50, 80, 120];
+const doubled = prices.map((p) => p * 2);
+// doubled = [100, 160, 240]
+```
+
+In the app, `displayedItems.map((item) => ...)` returns a `<View>` card for each dish, filled with that dish's own name, time, description, price and type. With three dishes it returns three cards, and React draws them one under the other:
+
+```
+displayedItems = [
+  { name: 'Pasta', price: 12, ... },   → card 1: Pasta, R12
+  { name: 'Steak', price: 45, ... },   → card 2: Steak, R45
+  { name: 'Cake',  price: 30, ... },   → card 3: Cake, R30
+]
+```
+
+Each card is given `key={item.id}`. React needs a unique key on every item in a rendered list so it can tell the cards apart. That way, when one dish is edited or deleted, only that card is updated. Without keys, React shows a warning.
+
+Whenever `displayedItems` changes (a dish is added, edited or deleted, or the search text changes), React runs the `.map` again from the start and redraws the list with the new data.
+
 ## Video demonstration
 
 YouTube (Unlisted): _add your link here_
 
 ## References
 
-_Add any sources you used here, in the referencing style required by the module (Harvard/APA)._
+I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages. The installation steps came from the official documentation for each package. I also used a Google search to find the command for installing the splash screen. The app icon and loading screen image were generated with the help of Grok, and I used Claude as a coding and learning aid and to help format my work and understand the assignment brief.
+
+- Google (2026) Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. Available at: https://www.google.com (Accessed: 11 October 2026).
+- React Navigation (n.d.) *Getting started*. Available at: https://reactnavigation.org/docs/getting-started (Accessed: 11 October 2026).
+- React Native Async Storage (n.d.) *Install*. Available at: https://react-native-async-storage.github.io/async-storage/docs/install/ (Accessed: 11 October 2026).
+- React Native Community (n.d.) *@react-native-picker/picker*. Available at: https://github.com/react-native-picker/picker (Accessed: 11 October 2026).
+- xAI (2026) *Grok* [Generative AI tool]. Used to generate the chef logo for the app icon and loading screen. Available at: https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a (Accessed: 11 October 2026).
+- Google (2026) *what is the command to install the splash screen on react native* [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native (Accessed: 11 October 2026).
+- Anthropic (2026) *Claude* [Generative AI tool]. Used as a coding and learning aid while building the app. Available at: https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e (Accessed: 11 October 2026).
+- Anthropic (2026) *Claude* [Generative AI tool]. Used to help format my work and to understand the assignment brief. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 (Accessed: 11 October 2026).

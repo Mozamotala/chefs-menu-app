@@ -191,14 +191,17 @@ export default function App() {
           
           <View style={{ marginTop: 10 }}>
             <Text style={styles.sectionHeader}>
-              {searchItem ? `Search Results (${displayedItems.length})` 
-              : `Menu Items (${menuItems.length}) 
+              {searchItem ? `Search Results (${displayedItems.length})`:
+             `Menu Items (${menuItems.length}) 
               Total: R${totalPrice.toFixed(2)}
               Avg: R${averagePrice.toFixed(2)}`}
               
             </Text>
-            
-            {displayedItems.map((item) => (
+            {displayedItems.length === 0 ? (/*this work by using a ternary operator (condition |value if true : value if false) */
+              <Text>{searchItem ? `No matching dishes found.` : `No menu items available. Please add a new dish.`}</Text>
+            ) : (
+
+            displayedItems.map((item) => (
               <View key={item.id} style={styles.card}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{item.name}</Text>
                 <Text style={styles.itemDetailText}>Time: {item.time}</Text>
@@ -223,7 +226,8 @@ export default function App() {
                    
 
               </View>
-            ))}
+            ))
+          )}
             
 
             {searchItem !== '' && displayedItems.length === 0 && (

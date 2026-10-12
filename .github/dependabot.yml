@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /cheff-app-v3
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    # Expo pins compatible versions of these per SDK, so they are
+    # upgraded together with `npx expo install --fix`, not one by one
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-native"
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]

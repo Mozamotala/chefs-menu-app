@@ -4,6 +4,8 @@
 **Assessment:** PoE Part 2 – Building the Mobile Application
 **Student:** Mohamed Zaeem Motala (ST10515004)
 
+> **Submission note:** this repository is my **PoE Part 2** submission. Besides the Part 2 requirements (add and view menu items, with validation and feedback messages), it also includes search, edit and delete features that I built ahead of the Final PoE.
+
 ## About the app
 
 Chef's Menu Manager is a React Native (Expo) Android app built for Christoffel, a restaurant owner whose chef currently keeps menu information on paper. The app lets the chef capture dishes on a phone and see the whole menu in one place.
@@ -178,6 +180,12 @@ The summary above the menu list showed up misaligned: "Total" and "Avg" were pus
 ```
 
 After the fix I asked Claude Code to explain each change line by line so that I understood it, and not only copied the answer.
+
+## Design decisions and changes from Part 1
+
+- **Dish types.** The app uses four dish types: Appetizer, Main Course, Dessert and Beverage. My Part 1 design used three courses, and I added Beverage and used the label "Appetizer" because more variety makes it easier for the chef to organise the menu. The picker, the menu cards and the Details screen all use the same four types.
+- **Splash screen.** While the app starts up, my chef-hat logo is shown on a plain white splash screen. It is set up with the `expo-splash-screen` plugin and the `splash-icon.png` image.
+- **Messages.** Validation errors, the high price confirmation and the success message tell the chef what happened after every action.
 
 ## Video demonstration
 

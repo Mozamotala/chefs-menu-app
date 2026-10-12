@@ -23,7 +23,7 @@ export default function App() {
   const [searchItem, setSearchItem] = useState(''); // whats typed in the search bar
   // if this has an id, im editing that dish. if its null, im adding a new one
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  //pick msg for editing mode and pick mesage when adding a new dish. if editingItemId has a value, we are in edit mode, otherwise we are in add mode
+  // pick a message for editing mode and a message when adding a new dish. if editingItemId has a value, we are in edit mode, otherwise we are in add mode
   const [successMessage, setSuccessMessage] = useState('');
   
   // wipes the form and gets me out of edit mode
@@ -149,8 +149,8 @@ export default function App() {
                 }
                 if (!dishType) { alert('Please select a dish type.'); return; }
 
-                setSuccessMessage(editingItemId ? "Dish updated successfully!" : "Dish added successfully!");
-                alert("Dish added successfully!"); // show the success message in an alert
+                setSuccessMessage(editingItemId ? "Dish updated successfully!" : "Dish added successfully!")
+                
   
                 // show the success msg for 2 sec then hide it
                 setCompleted(true); 

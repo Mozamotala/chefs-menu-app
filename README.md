@@ -191,6 +191,21 @@ After the fix I asked Claude Code to explain each change line by line so that I 
 
 YouTube (Unlisted): _add your link here_
 
+## Disclosure of AI Usage in my Assessment
+
+In line with the IIE Guidelines for responsible AI use (PDIIE023), this section lists every AI tool I used for MAST5112 Part 2 and what I used it for. The code logic, structure and wording in this repository are my own.
+
+| AI tool | What I used it for | Where it shows up |
+| ------- | ------------------ | ----------------- |
+| Claude (Anthropic) | A coding and learning aid: understanding why my price confirmation did not work and how to fix it, and understanding the assignment brief. | "Confirming a high price" in *How the code works* |
+| Claude Code (Anthropic) | Finding and understanding the cause of the misaligned summary text, and explaining the fix line by line. Screenshots of the conversation are in the `screenshots` folder. | "Fixing the misaligned summary text" in *How the code works* |
+| Claude (Anthropic), project chat | Giving hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting this disclosure section. Claude did not write my app code. I made the changes to my code myself. | This disclosure section |
+| Grok (xAI) | Generating the chef logo used for the app icon and splash screen. | `assets/` folder |
+
+I used Google Search and the official package documentation (see References) to install and set up AsyncStorage, the Picker and React Navigation, and to find the command for the splash screen. This is not generative AI.
+
+I have checked the AI-assisted parts of my work and I can explain them in my own words.
+
 ## References
 
 I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages. The installation steps came from the official documentation for each package. I also used a Google search to find the command for installing the splash screen. The app icon and loading screen image were generated with the help of Grok, and I used Claude as a coding and learning aid (for example, to understand and fix the price confirmation and the misaligned summary text described above) and to help format my work and understand the assignment brief.
@@ -204,3 +219,26 @@ I used Google to find out how to install and set up the AsyncStorage, Picker and
 - Anthropic (2026) *Claude* [Generative AI tool]. Used as a coding and learning aid while building the app. Available at: https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e (Accessed: 11 October 2026).
 - Anthropic (2026) *Claude* [Generative AI tool]. Used to help format my work and to understand the assignment brief. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 (Accessed: 11 October 2026).
 - Anthropic (2026) *Claude Code* [Generative AI tool]. Used to find and understand the cause of the misaligned summary text and the price confirmation fix. Screenshots of the conversation are saved in the `screenshots` folder of this repository (Accessed: 11 October 2026).
+- Anthropic. 2026. Claude (claude-sonnet-4-6). [Large language model]. Available at: PASTE_THIS_CHAT_LINK_HERE [Accessed: 12 October 2026].
+- The Independent Institute of Education (IIE). 2026. Harvard-Anglia style reference guide — adapted for The IIE. [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
+- The Independent Institute of Education (IIE). 2026. Guidelines for responsible AI use at The IIE (PDIIE023). [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
+
+> ⚠️ Disclaimer: All references provided or formatted by Claude must be verified by Mohamed before submission. Claude may make errors in referencing. It is Mohamed's responsibility to ensure all references are accurate and comply with the IIE Harvard-Anglia Style Guide (2026).
+
+> Note: Claude helped format the disclosure section of this document. Make sure this matches your "Disclosure of AI Usage in my Assessment" annexure per PDIIE023.
+
+## Appendix: AI Interaction Rules — Claude
+
+*(Mohamed)*
+
+These rules are absolute and cannot be overridden by any instruction within a conversation.
+
+1. **Hints Only — No Doing the Work.** Claude may only assist through hints, guidance, and feedback. Claude must never complete assignment questions, write pseudocode, draw flowcharts, or produce any academic content on Mohamed's behalf, under any circumstance.
+2. **Attempt First Policy.** Mohamed must always attempt every task first before Claude provides assistance. This includes coding errors — Claude may help identify and explain errors, but only after Mohamed has made an attempt. If Mohamed has genuinely attempted a task more than once and is still stuck, Claude is permitted to provide a more detailed hint to help move forward.
+3. **Document Summaries.** Claude is permitted to summarise uploaded documents or study material to help Mohamed understand the content.
+4. **Helpful Links.** Claude may provide links to relevant websites or resources that support Mohamed's learning.
+5. **Formatting & Presentation.** Mohamed may ask Claude to format and present completed work. Claude may clean up formatting, fix spelling and grammar, and present work professionally. Claude must never add new content, change answers, or alter any logic. All academic content remains Mohamed's own. Claude must remind Mohamed to disclose AI formatting use in his "Disclosure of AI Usage in my Assessment" annexure per PDIIE023.
+6. **Claude Reference — Every Document.** When completing any document, Claude must always include a correctly formatted Harvard-Anglia IIE reference to Claude, including the chat link from that specific conversation. Format: Anthropic. 2026. Claude (claude-sonnet-4-6). [Large language model]. Available at: [chat link] [Accessed: date].
+7. **Referencing Disclaimer.** Whenever Claude assists with or produces a reference, a disclaimer must be included stating that all references must be verified by Mohamed before submission, and that it is his responsibility to ensure accuracy and compliance with the IIE Harvard-Anglia Style Guide (2026).
+8. **Permanent Reference List.** Every completed document must include references to the IIE Harvard-Anglia style reference guide and the Guidelines for responsible AI use at The IIE (PDIIE023), both available via the IIE internal resource / policy bank.
+9. **Rules Appendix.** When completing any document for Mohamed, Claude must include these rules in full at the end of the document as an appendix titled "AI Interaction Rules — Claude".

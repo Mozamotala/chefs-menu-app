@@ -189,7 +189,7 @@ After the fix I asked Claude Code (Anthropic, 2026d) to explain each change line
 
 ## Video demonstration
 
-YouTube (Unlisted): _add your link here_
+YouTube (Unlisted): https://youtu.be/IrK2ZIFfQ-o
 
 ## References
 
@@ -199,7 +199,7 @@ Anthropic. 2026a. Claude (Sonnet 5.5). [Large language model]. Available at: htt
 
 Anthropic. 2026b. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 [Accessed: 11 October 2026].
 
-Anthropic. 2026c. Claude (Sonnet 5.5). [Large language model]. Available at: [PASTE THIS CHAT LINK HERE] [Accessed: 12 October 2026].
+Anthropic. 2026c. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b [Accessed: 12 October 2026].
 
 Anthropic. 2026d. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository (ai-help-1, ai-help-2 and ai-help-3). [Accessed: 11 October 2026].
 
@@ -230,7 +230,7 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | *How the code works*: "Confirming a high price" | Claude (Anthropic, 2026a) | A coding and learning aid: understanding why my price confirmation did not work and how to fix it. | 11 October 2026 | https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e |
 | *How the code works*: "Fixing the misaligned summary text" | Claude Code (Anthropic, 2026d) | Finding and understanding the cause of the misaligned summary text, and explaining the fix line by line. | 11 October 2026 | Screenshots in the `screenshots` folder |
 | Whole of Part 2 (brief, rubric and app review) | Claude (Anthropic, 2026b) | Understanding the assignment brief and helping to format my work. | 11 October 2026 | https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 |
-| Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | [PASTE THIS CHAT LINK HERE] |
+| Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b |
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
 
 Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.

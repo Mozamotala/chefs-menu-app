@@ -147,7 +147,7 @@ I wanted the app to warn the chef when a price looks too high, but not to block 
 if (!price || Number(price) > 400) { alert('Are you sure about the price?'); return; continue; }
 ```
 
-This did not work, and I used an AI assistant (Claude) to help me understand why. What I learned:
+This did not work, and I used an AI assistant (Claude) (Anthropic, 2026a) to help me understand why. What I learned:
 
 - `continue` only works inside a loop, so it caused an error here. It also came after `return`, so it could never have run.
 - `alert()` can only show a message with an OK button. It cannot give the user a choice, so it could not offer "go back" or "carry on".
@@ -163,7 +163,7 @@ The fix in `Home.tsx`:
 
 ### Fixing the misaligned summary text
 
-The summary above the menu list showed up misaligned: "Total" and "Avg" were pushed to the right of "Menu Items". I could not work out why, so I asked Claude Code (the Claude assistant inside my code editor). Claude Code does not have a share-chat link, so I have saved screenshots of the conversation in the [`screenshots`](./screenshots) folder.
+The summary above the menu list showed up misaligned: "Total" and "Avg" were pushed to the right of "Menu Items". I could not work out why, so I asked Claude Code (the Claude assistant inside my code editor) (Anthropic, 2026d). Claude Code does not have a share-chat link, so I have saved screenshots of the conversation in the [`screenshots`](./screenshots) folder.
 
 ![The misaligned summary text](./screenshots/ai-help-1-misaligned-summary.png)
 
@@ -179,7 +179,7 @@ The summary above the menu list showed up misaligned: "Total" and "Avg" were pus
 `Menu Items (${menuItems.length})\nTotal: R${totalPrice.toFixed(2)}\nAvg: R${averagePrice.toFixed(2)}`
 ```
 
-After the fix I asked Claude Code to explain each change line by line so that I understood it, and not only copied the answer.
+After the fix I asked Claude Code (Anthropic, 2026d) to explain each change line by line so that I understood it, and not only copied the answer.
 
 ## Design decisions and changes from Part 1
 
@@ -191,41 +191,49 @@ After the fix I asked Claude Code to explain each change line by line so that I 
 
 YouTube (Unlisted): _add your link here_
 
-## Disclosure of AI Usage in my Assessment
-
-In line with the IIE Guidelines for responsible AI use (PDIIE023), this section lists every AI tool I used for MAST5112 Part 2 and what I used it for. The code logic, structure and wording in this repository are my own.
-
-| AI tool | What I used it for | Where it shows up |
-| ------- | ------------------ | ----------------- |
-| Claude (Anthropic) | A coding and learning aid: understanding why my price confirmation did not work and how to fix it, and understanding the assignment brief. | "Confirming a high price" in *How the code works* |
-| Claude Code (Anthropic) | Finding and understanding the cause of the misaligned summary text, and explaining the fix line by line. Screenshots of the conversation are in the `screenshots` folder. | "Fixing the misaligned summary text" in *How the code works* |
-| Claude (Anthropic), project chat | Giving hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting this disclosure section. Claude did not write my app code. I made the changes to my code myself. | This disclosure section |
-| Grok (xAI) | Generating the chef logo used for the app icon and splash screen. | `assets/` folder |
-
-I used Google Search and the official package documentation (see References) to install and set up AsyncStorage, the Picker and React Navigation, and to find the command for the splash screen. This is not generative AI.
-
-I have checked the AI-assisted parts of my work and I can explain them in my own words.
-
 ## References
 
-I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages. The installation steps came from the official documentation for each package. I also used a Google search to find the command for installing the splash screen. The app icon and loading screen image were generated with the help of Grok, and I used Claude as a coding and learning aid (for example, to understand and fix the price confirmation and the misaligned summary text described above) and to help format my work and understand the assignment brief.
+I used Google to find out how to install and set up the AsyncStorage, Picker and React Navigation packages (Google, 2026a). The installation steps came from the official documentation for each package (React Native Async Storage, n.d.; React Native Community, n.d.; React Navigation, n.d.). I also used a Google search to find the command for installing the splash screen (Google, 2026b). The app icon and loading screen image were generated with the help of Grok (xAI, 2026), and I used Claude as a coding and learning aid (for example, to understand and fix the price confirmation and the misaligned summary text described above) and to help format my work and understand the assignment brief (Anthropic, 2026a; 2026b; 2026c).
 
-- Google (2026) Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. Available at: https://www.google.com (Accessed: 11 October 2026).
-- React Navigation (n.d.) *Getting started*. Available at: https://reactnavigation.org/docs/getting-started (Accessed: 11 October 2026).
-- React Native Async Storage (n.d.) *Install*. Available at: https://react-native-async-storage.github.io/async-storage/docs/install/ (Accessed: 11 October 2026).
-- React Native Community (n.d.) *@react-native-picker/picker*. Available at: https://github.com/react-native-picker/picker (Accessed: 11 October 2026).
-- xAI (2026) *Grok* [Generative AI tool]. Used to generate the chef logo for the app icon and loading screen. Available at: https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a (Accessed: 11 October 2026).
-- Google (2026) *what is the command to install the splash screen on react native* [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native (Accessed: 11 October 2026).
-- Anthropic (2026) *Claude* [Generative AI tool]. Used as a coding and learning aid while building the app. Available at: https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e (Accessed: 11 October 2026).
-- Anthropic (2026) *Claude* [Generative AI tool]. Used to help format my work and to understand the assignment brief. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 (Accessed: 11 October 2026).
-- Anthropic (2026) *Claude Code* [Generative AI tool]. Used to find and understand the cause of the misaligned summary text and the price confirmation fix. Screenshots of the conversation are saved in the `screenshots` folder of this repository (Accessed: 11 October 2026).
-- Anthropic. 2026. Claude (claude-sonnet-4-6). [Large language model]. Available at: PASTE_THIS_CHAT_LINK_HERE [Accessed: 12 October 2026].
-- The Independent Institute of Education (IIE). 2026. Harvard-Anglia style reference guide — adapted for The IIE. [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
-- The Independent Institute of Education (IIE). 2026. Guidelines for responsible AI use at The IIE (PDIIE023). [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
+Anthropic. 2026a. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e [Accessed: 11 October 2026].
+
+Anthropic. 2026b. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 [Accessed: 11 October 2026].
+
+Anthropic. 2026c. Claude (Sonnet 5.5). [Large language model]. Available at: [PASTE THIS CHAT LINK HERE] [Accessed: 12 October 2026].
+
+Anthropic. 2026d. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository (ai-help-1, ai-help-2 and ai-help-3). [Accessed: 11 October 2026].
+
+Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
+
+Google. 2026b. What is the command to install the splash screen on react native. [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native [Accessed: 11 October 2026].
+
+The Independent Institute of Education (IIE). 2026a. Guidelines for responsible AI use at The IIE (PDIIE023). [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
+
+The Independent Institute of Education (IIE). 2026b. Harvard-Anglia style reference guide — adapted for The IIE. [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
+
+React Native Async Storage. n.d. Install. Available at: https://react-native-async-storage.github.io/async-storage/docs/install/ [Accessed: 11 October 2026].
+
+React Native Community. n.d. @react-native-picker/picker. Available at: https://github.com/react-native-picker/picker [Accessed: 11 October 2026].
+
+React Navigation. n.d. Getting started. Available at: https://reactnavigation.org/docs/getting-started [Accessed: 11 October 2026].
+
+xAI. 2026. Grok (4.7). [Generative AI tool]. Used to generate the chef logo for the app icon and loading screen. Available at: https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a [Accessed: 11 October 2026].
 
 > ⚠️ Disclaimer: All references provided or formatted by Claude must be verified by Mohamed before submission. Claude may make errors in referencing. It is Mohamed's responsibility to ensure all references are accurate and comply with the IIE Harvard-Anglia Style Guide (2026).
 
-> Note: Claude helped format the disclosure section of this document. Make sure this matches your "Disclosure of AI Usage in my Assessment" annexure per PDIIE023.
+## Disclosure of AI Usage in my Assessment
+
+In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), this annexure lists every use of generative AI in MAST5112 Part 2. The code logic, structure and wording in this repository are my own. Claude formatted this annexure and the reference list.
+
+| Section of this assessment | AI tool | Purpose | Date(s) used | Link / evidence |
+| -------------------------- | ------- | ------- | ------------ | --------------- |
+| *How the code works*: "Confirming a high price" | Claude (Anthropic, 2026a) | A coding and learning aid: understanding why my price confirmation did not work and how to fix it. | 11 October 2026 | https://claude.ai/share/321c6eac-e7e9-4270-8f79-43b30c067c0e |
+| *How the code works*: "Fixing the misaligned summary text" | Claude Code (Anthropic, 2026d) | Finding and understanding the cause of the misaligned summary text, and explaining the fix line by line. | 11 October 2026 | Screenshots in the `screenshots` folder |
+| Whole of Part 2 (brief, rubric and app review) | Claude (Anthropic, 2026b) | Understanding the assignment brief and helping to format my work. | 11 October 2026 | https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 |
+| Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | [PASTE THIS CHAT LINK HERE] |
+| App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
+
+Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.
 
 ## Appendix: AI Interaction Rules — Claude
 

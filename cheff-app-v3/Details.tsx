@@ -1,15 +1,16 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from './navigation';
+import { useState } from "react";
+import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "./navigation";
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Details'>;
+type Props = NativeStackScreenProps<RootStackParamList, "Details">;
 
 // the 4 categories - value matches what the Picker saves, label is what we show
 const dishTypes = [
-  { value: 'appetizer', label: 'Appetizer' },
-  { value: 'mainCourse', label: 'Main Course' },
-  { value: 'dessert', label: 'Dessert' },
-  { value: 'beverage', label: 'Beverage' },
+  { value: "appetizer", label: "Appetizer" },
+  { value: "mainCourse", label: "Main Course" },
+  { value: "dessert", label: "Dessert" },
+  { value: "beverage", label: "Beverage" },
 ];
 
 // second page: shows all dishes grouped by category
@@ -17,40 +18,102 @@ export default function Details({ route }: Props) {
   // grab the dishes that Home sent over
   const { menuItems } = route.params;
 
+  // how many dishes there are, and their prices added up (bad prices count as 0)
   const totalItems = menuItems.length;
-  const totalPrice = menuItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+  const totalPrice = menuItems.reduce(
+    (sum, item) => sum + (parseFloat(item.price) || 0),
+    0,
+  );
+
+  // search text typed by the user, used to filter dishes by name
+  const [searchItem, setSearchItem] = useState("");
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
+    // everything on screen lives inside this ScrollView so the page can scroll
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContainer}
+    >
+      {/* search box - every letter typed updates searchItem */}
+      <TextInput
+        style={styles.searchContainer}
+        placeholder="Search dishes..."
+        value={searchItem}
+        onChangeText={(text) => setSearchItem(text)}
+      />
+
+      {/* summary card - total dishes and total value of the whole menu */}
       <View style={styles.card}>
         <Text style={styles.sectionHeader}>Summary</Text>
         <Text style={styles.itemDetailText}>Total dishes: {totalItems}</Text>
-        <Text style={styles.itemDetailText}>Total value: R{totalPrice.toFixed(2)}</Text>
+        <Text style={styles.itemDetailText}>
+          Total value: R{totalPrice.toFixed(2)}
+        </Text>
       </View>
+
+      {/* if something is typed but no dish name matches, show a message */}
+      {searchItem.trim() !== "" &&
+        !menuItems.some((item) =>
+          item.name.toLowerCase().includes(searchItem.toLowerCase()),
+        ) && (
+          <Text style={styles.emptyText}>Cannot find any matching dishes.</Text>
+        )}
 
       {/* make one card per category */}
       {dishTypes.map((type) => {
         // only the dishes in this category, plus their avg price
-        const dishes = menuItems.filter((item) => item.dishType === type.value);
-        const total = dishes.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+        const dishes = menuItems.filter(
+          (item) =>
+            item.dishType === type.value &&
+            item.name.toLowerCase().includes(searchItem.toLowerCase()),
+        );
+        // add up this category's prices, then divide for the average (0 if empty)
+        const total = dishes.reduce(
+          (sum, item) => sum + (parseFloat(item.price) || 0),
+          0,
+        );
         const average = dishes.length > 0 ? total / dishes.length : 0;
 
+        // while searching, hide categories with no matching dishes
+        if (searchItem && dishes.length === 0) return null;
+
+        // one card: category name + count, average price, then each dish
         return (
-          <View key={type.value} style={styles.card}>
+          <View
+            key={type.value}
+            style={
+              styles.card
+            } /*type = category value =appatiser , maincourse ext   */
+          >
             <Text style={styles.sectionHeader}>
               {type.label} ({dishes.length})
             </Text>
-            <Text style={styles.itemDetailText}>Average price: R{average.toFixed(2)}</Text>
+            <Text style={styles.itemDetailText}>
+              Average price: R{average.toFixed(2)}
+            </Text>
 
+            {/* .map goes through every dish in this category one by one.
+                item = the dish it's on right now (I picked the name "item").
+                everything after => is MY rules: make one row showing that dish's
+                name, description, time and price. 3 dishes = 3 rows.
+                key={item.id} gives each row a unique id so React can tell them apart */}
             {dishes.map((item) => (
               <View key={item.id} style={styles.dishRow}>
                 <Text style={styles.dishName}>{item.name}</Text>
                 <Text style={styles.itemDetailText}>{item.description}</Text>
-                <Text style={styles.itemDetailText}>Time: {item.time} · R{item.price}</Text>
+                <Text style={styles.itemDetailText}>
+                  Time: {item.time} · R{item.price}
+                </Text>
               </View>
             ))}
 
-            {dishes.length === 0 && <Text style={styles.emptyText}>No dishes yet.</Text>}
+            {/* only shows when the category has no dishes at all */}
+            {
+              dishes.length === 0 && (
+                <Text style={styles.emptyText}>No dishes yet.</Text>
+              )
+              /* .length is  reacts way of counting items so dish.lenght is leteraly how many dishes there are */
+            }
           </View>
         );
       })}
@@ -61,20 +124,29 @@ export default function Details({ route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   scrollContainer: {
     padding: 20,
     paddingBottom: 40,
   },
+  input: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 15,
+  },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -82,29 +154,40 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    color: '#333',
+    color: "#333",
   },
   dishRow: {
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: "#eee",
     paddingTop: 10,
     marginTop: 10,
   },
   dishName: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
-    color: '#ff506a',
+    color: "#ff506a",
   },
   itemDetailText: {
     marginTop: 4,
-    color: '#666',
+    color: "#666",
     fontSize: 14,
   },
   emptyText: {
     marginTop: 10,
-    color: '#999',
-    fontStyle: 'italic',
+    color: "#999",
+    fontStyle: "italic",
+  },
+  searchContainer: {
+    borderWidth: 1,
+    borderColor: "#ff506a",
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    fontSize: 16,
+    backgroundColor: "#fff",
   },
 });

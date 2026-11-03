@@ -1,10 +1,10 @@
 # Chef's Menu Manager
 
 **Module:** MAST5112 – Mobile App Scripting
-**Assessment:** PoE Part 2 – Building the Mobile Application
+**Assessment:** PoE Part 3 – Final PoE
 **Student:** Mohamed Zaeem Motala (ST10515004)
 
-> **Submission note:** this repository is my **PoE Part 2** submission. Besides the Part 2 requirements (add and view menu items, with validation and feedback messages), it also includes search, edit and delete features that I built ahead of the Final PoE.
+> **Submission note:** this repository is my **PoE Part 3 (Final PoE)** submission. It builds on my Part 2 app (add and view menu items, with validation and feedback messages, plus search, edit and delete), and adds a search box to the Details screen. The changes made for Part 3 are listed under [Part 3 changes](#part-3-changes).
 
 ## About the app
 
@@ -24,14 +24,15 @@ The app code is in the [`cheff-app-v3`](./cheff-app-v3) folder.
 - The menu list updates straight away when a dish is added, and the list is saved on the device with AsyncStorage, so it is still there when the app is reopened.
 - A summary line showing the number of dishes, the total price and the average price.
 - A Details screen (opened with the **Details** button) that groups dishes by type and shows a count and average price for each type.
-- Extras beyond the Part 2 requirements: search by dish name, edit a dish, delete a dish.
+- Search by dish name, edit a dish, delete a dish.
+- **New in Part 3:** a search box on the Details screen. While the chef types, only the matching dishes are shown, and any dish type with no matches is hidden. If nothing matches, the message "Cannot find any matching dishes." is shown.
 
 ## Screens
 
 | Screen  | Purpose                                                              |
 | ------- | -------------------------------------------------------------------- |
 | Home    | Form for adding dishes, search bar, and the list of menu items       |
-| Details | Menu summary and dishes grouped by dish type                         |
+| Details | Search bar, menu summary and dishes grouped by dish type             |
 
 Navigation uses React Navigation (native stack): Home → Details.
 
@@ -181,6 +182,39 @@ The summary above the menu list showed up misaligned: "Total" and "Avg" were pus
 
 After the fix I asked Claude Code (Anthropic, 2026d) to explain each change line by line so that I understood it, and not only copied the answer.
 
+## Part 3 changes
+
+### Search on the Details screen
+
+The Details screen (`Details.tsx`) now has its own search box at the top. It works like this:
+
+1. **A state variable stores the search text.** `const [searchItem, setSearchItem] = useState("");` starts as an empty string, and the `TextInput` updates it every time a key is pressed.
+2. **Each dish type card filters its own dishes.** The screen uses `dishTypes.map(...)` to make one card per dish type. Inside each card, `.filter` keeps a dish only if both of these are true (`&&` means "and"):
+   - the dish belongs to this dish type (`item.dishType === type.value`)
+   - the dish name contains the search text (`.toLowerCase()` is used on both, so capital letters do not matter)
+3. **Cards with no matches are hidden.** `if (searchItem && dishes.length === 0) return null;` means: if the chef is searching and this dish type has no matching dishes, draw nothing for it. In React, returning `null` shows nothing.
+4. **A message is shown when nothing matches.** `.some(...)` checks whether at least one dish in the whole menu matches the search. If none do, "Cannot find any matching dishes." is shown.
+5. **The average price per dish type** is worked out with `.reduce`, which adds up the prices one dish at a time, then divides by the number of dishes (`dishes.length`). If a dish type has no dishes, the average is 0, so the screen never shows "NaN".
+
+When the search box is empty, every dish matches, so all the cards are shown as normal. The Summary card always shows the totals for the whole menu, not only the search results.
+
+```
+type "cake" → setSearchItem("cake") → screen re-renders
+            → each dish type card keeps only names containing "cake"
+            → dish types with no cake are hidden (return null)
+            → Dessert (1): Chocolate Cake
+```
+
+### Fixing the Details screen layout
+
+My first attempt at the Details search put the new `TextInput` and results list above the `return`, and then before the `<ScrollView>`. Nothing showed up and the file stopped working. I used Claude Code (Anthropic, 2026e) to help me understand why:
+
+- Only what is inside `return ( ... )` is drawn on the screen.
+- A `return` can only hold **one** outer element. Here that element is the `<ScrollView>`, so everything else has to go inside it.
+- Inside JSX, comments have to be written as `{/* comment */}`, not `//`.
+
+I also asked Claude Code to explain `.map`, `.filter`, `.reduce`, `.length`, `type.value` and `item` in plain words, and to add comments to `Details.tsx` so I could follow the code.
+
 ## Design decisions and changes from Part 1
 
 - **Dish types.** The app uses four dish types: Appetizer, Main Course, Dessert and Beverage. My Part 1 design used three courses, and I added Beverage and used the label "Appetizer" because more variety makes it easier for the chef to organise the menu. The picker, the menu cards and the Details screen all use the same four types.
@@ -203,6 +237,8 @@ Anthropic. 2026c. Claude (Sonnet 5.5). [Large language model]. Available at: htt
 
 Anthropic. 2026d. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository (ai-help-1, ai-help-2 and ai-help-3). [Accessed: 11 October 2026].
 
+Anthropic. 2026e. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 3 November 2026].
+
 Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
 
 Google. 2026b. What is the command to install the splash screen on react native. [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native [Accessed: 11 October 2026].
@@ -223,7 +259,7 @@ xAI. 2026. Grok (4.7). [Generative AI tool]. Used to generate the chef logo for 
 
 ## Disclosure of AI Usage in my Assessment
 
-In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), this annexure lists every use of generative AI in MAST5112 Part 2. The code logic, structure and wording in this repository are my own. Claude formatted this annexure and the reference list.
+In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), this annexure lists every use of generative AI in MAST5112 Part 2 and Part 3. The code logic, structure and wording in this repository are my own. Claude formatted this annexure and the reference list.
 
 | Section of this assessment | AI tool | Purpose | Date(s) used | Link / evidence |
 | -------------------------- | ------- | ------- | ------------ | --------------- |
@@ -231,6 +267,7 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | *How the code works*: "Fixing the misaligned summary text" | Claude Code (Anthropic, 2026d) | Finding and understanding the cause of the misaligned summary text, and explaining the fix line by line. | 11 October 2026 | Screenshots in the `screenshots` folder |
 | Whole of Part 2 (brief, rubric and app review) | Claude (Anthropic, 2026b) | Understanding the assignment brief and helping to format my work. | 11 October 2026 | https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 |
 | Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b |
+| *Part 3 changes*: Details screen search and layout fix (`Details.tsx`) and this README | Claude Code (Anthropic, 2026e) | Claude Code wrote the first version of the Details screen search (filtering each dish type card and hiding cards with no matches), fixed the layout errors in my JSX (moving my code inside the `ScrollView` and fixing brackets), added comments to `Details.tsx`, explained `.map`, `.filter`, `.reduce`, `.length`, `type.value` and `item`, and drafted the Part 3 sections of this README. I added the "Cannot find any matching dishes." message and the search box styling myself. | 3 November 2026 | Screenshots in the `screenshots` folder |
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
 
 Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.

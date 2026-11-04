@@ -239,6 +239,8 @@ Anthropic. 2026d. Claude Code (Opus 5.5). [Large language model]. Screenshots of
 
 Anthropic. 2026e. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 3 November 2026].
 
+Anthropic. 2026f. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 [Accessed: 3 November 2026].
+
 Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
 
 Google. 2026b. What is the command to install the splash screen on react native. [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native [Accessed: 11 October 2026].
@@ -268,6 +270,7 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | Whole of Part 2 (brief, rubric and app review) | Claude (Anthropic, 2026b) | Understanding the assignment brief and helping to format my work. | 11 October 2026 | https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 |
 | Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b |
 | *Part 3 changes*: Details screen search and layout fix (`Details.tsx`) and this README | Claude Code (Anthropic, 2026e) | Claude Code wrote the first version of the Details screen search (filtering each dish type card and hiding cards with no matches), fixed the layout errors in my JSX (moving my code inside the `ScrollView` and fixing brackets), added comments to `Details.tsx`, explained `.map`, `.filter`, `.reduce`, `.length`, `type.value` and `item`, and drafted the Part 3 sections of this README. I added the "Cannot find any matching dishes." message and the search box styling myself. | 3 November 2026 | Screenshots in the `screenshots` folder |
+| Whole of Part 3 (hints and feedback) | Claude (Anthropic, 2026f) | Hints and feedback only: checking my Part 3 work against the rubric and pointing out what was missing (filter by course, reusable functions) and small problems in my Details screen search. Claude did not write my app code. | 3 November 2026 | https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 |
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
 
 Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.

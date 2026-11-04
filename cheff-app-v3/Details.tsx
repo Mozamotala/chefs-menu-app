@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./navigation";
+import {
+  dishTypes,
+  searchDishes,
+  getTotalPrice,
+  getAveragePrice,
+  SearchBar,
+} from "./resuable";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Details">;
-
-// the 4 categories - value matches what the Picker saves, label is what we show
-const dishTypes = [
-  { value: "appetizer", label: "Appetizer" },
-  { value: "mainCourse", label: "Main Course" },
-  { value: "dessert", label: "Dessert" },
-  { value: "beverage", label: "Beverage" },
-];
 
 // second page: shows all dishes grouped by category
 export default function Details({ route }: Props) {
@@ -20,13 +19,12 @@ export default function Details({ route }: Props) {
 
   // how many dishes there are, and their prices added up (bad prices count as 0)
   const totalItems = menuItems.length;
-  const totalPrice = menuItems.reduce(
-    (sum, item) => sum + (parseFloat(item.price) || 0),
-    0,
-  );
+  const totalPrice = getTotalPrice(menuItems);
 
   // search text typed by the user, used to filter dishes by name
   const [searchItem, setSearchItem] = useState("");
+  // only the dishes that match the search (all of them if the search is empty)
+  const results = searchDishes(menuItems, searchItem);
 
   return (
     // everything on screen lives inside this ScrollView so the page can scroll
@@ -34,13 +32,8 @@ export default function Details({ route }: Props) {
       style={styles.container}
       contentContainerStyle={styles.scrollContainer}
     >
-      {/* search box - every letter typed updates searchItem */}
-      <TextInput
-        style={styles.searchContainer}
-        placeholder="Search dishes..."
-        value={searchItem}
-        onChangeText={(text) => setSearchItem(text)}
-      />
+      {/* search box (from resuable.tsx) - every letter typed updates searchItem */}
+      <SearchBar value={searchItem} onChange={setSearchItem} />
 
       {/* summary card - total dishes and total value of the whole menu */}
       <View style={styles.card}>
@@ -52,27 +45,15 @@ export default function Details({ route }: Props) {
       </View>
 
       {/* if something is typed but no dish name matches, show a message */}
-      {searchItem.trim() !== "" &&
-        !menuItems.some((item) =>
-          item.name.toLowerCase().includes(searchItem.toLowerCase()),
-        ) && (
-          <Text style={styles.emptyText}>Cannot find any matching dishes.</Text>
-        )}
+      {searchItem.trim() !== "" && results.length === 0 && (
+        <Text style={styles.emptyText}>Cannot find any matching dishes.</Text>
+      )}
 
       {/* make one card per category */}
       {dishTypes.map((type) => {
-        // only the dishes in this category, plus their avg price
-        const dishes = menuItems.filter(
-          (item) =>
-            item.dishType === type.value &&
-            item.name.toLowerCase().includes(searchItem.toLowerCase()),
-        );
-        // add up this category's prices, then divide for the average (0 if empty)
-        const total = dishes.reduce(
-          (sum, item) => sum + (parseFloat(item.price) || 0),
-          0,
-        );
-        const average = dishes.length > 0 ? total / dishes.length : 0;
+        // only the matching dishes in this category, plus their avg price
+        const dishes = results.filter((item) => item.dishType === type.value);
+        const average = getAveragePrice(dishes);
 
         // while searching, hide categories with no matching dishes
         if (searchItem && dishes.length === 0) return null;
@@ -130,15 +111,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
-  input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 12,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 15,
-  },
   card: {
     backgroundColor: "#fff",
     borderRadius: 16,
@@ -178,16 +150,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "#999",
     fontStyle: "italic",
-  },
-  searchContainer: {
-    borderWidth: 1,
-    borderColor: "#ff506a",
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginHorizontal: 20,
-    marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: "#fff",
   },
 });

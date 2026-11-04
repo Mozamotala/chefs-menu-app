@@ -16,6 +16,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./navigation";
+import {
+  dishTypes,
+  searchDishes,
+  getTotalPrice,
+  getAveragePrice,
+  saveDishes,
+  SearchBar,
+} from "./resuable";
 
 // this is my main screen, where the chef adds, edits, deletes and searches dishes
 export default function App() {
@@ -47,12 +55,8 @@ export default function App() {
   };
 
   // quick stats for the menu: how many dishes, total price and avg price
-  const totalItems = menuItems.length;
-  const totalPrice = menuItems.reduce(
-    (sum, item) => sum + (parseFloat(item.price) || 0),
-    0,
-  );
-  const averagePrice = totalItems > 0 ? totalPrice / totalItems : 0;
+  const totalPrice = getTotalPrice(menuItems);
+  const averagePrice = getAveragePrice(menuItems);
 
   // EDIT: find the dish and pop its info back into the form so i can change it
   const editMenuItem = (idToEdit: string) => {
@@ -79,9 +83,7 @@ export default function App() {
   }, []);
 
   // SEARCH: only keep dishes whose name has the search text in it (not case sensitive)
-  const displayedItems = menuItems.filter((dish) =>
-    dish.name.toLowerCase().includes(searchItem.toLowerCase().trim()),
-  );
+  const displayedItems = searchDishes(menuItems, searchItem);
   // DELETE: removes one dish for good using its id
   const deleteMenuItem = async (idToDestroy: string) => {
     // keep every dish except the one i want gone
@@ -89,7 +91,7 @@ export default function App() {
 
     // update the screen and save the new list so it stays deleted
     setMenuItems(updatedList);
-    await AsyncStorage.setItem("@dishes", JSON.stringify(updatedList));
+    await saveDishes(updatedList);
   };
 
   return (
@@ -145,10 +147,14 @@ export default function App() {
                 style={styles.dishType}
               >
                 <Picker.Item label="Select a dish type" value="" />
-                <Picker.Item label="Appetizer" value="appetizer" />
-                <Picker.Item label="Main Course" value="mainCourse" />
-                <Picker.Item label="Dessert" value="dessert" />
-                <Picker.Item label="Beverage" value="beverage" />
+                {/* one option per dish type, from the shared list in resuable.tsx */}
+                {dishTypes.map((type) => (
+                  <Picker.Item
+                    key={type.value}
+                    label={type.label}
+                    value={type.value}
+                  />
+                ))}
               </Picker>
             </View>
 
@@ -242,10 +248,7 @@ export default function App() {
                   );
 
                   setMenuItems(updatedList);
-                  await AsyncStorage.setItem(
-                    "@dishes",
-                    JSON.stringify(updatedList),
-                  );
+                  await saveDishes(updatedList);
                   clearForm();
                 } else {
                   // ADD MODE: make a brand new dish, using the time as a unique id
@@ -261,17 +264,10 @@ export default function App() {
                   // add it to the end of the list, then clear the form
                   updatedList = [...menuItems, newItem];
                   setMenuItems(updatedList);
-                  setName("");
-                  setTime("");
-                  setDescription("");
-                  setPrice("");
-                  setDishType("");
+                  clearForm();
 
                   // save to the phone so it's still there after closing the app
-                  await AsyncStorage.setItem(
-                    "@dishes",
-                    JSON.stringify(updatedList),
-                  );
+                  await saveDishes(updatedList);
                 }
               }}
             >
@@ -288,13 +284,7 @@ export default function App() {
           </View>
 
           {/* search bar - filters the list as you type */}
-          <TextInput
-            value={searchItem}
-            style={styles.searchBarInput}
-            placeholder="Search menu items..."
-            placeholderTextColor="#888"
-            onChangeText={(text) => setSearchItem(text)}
-          />
+          <SearchBar value={searchItem} onChange={setSearchItem} />
 
           <View style={{ marginTop: 10 }}>
             <Text style={styles.sectionHeader}>
@@ -304,7 +294,15 @@ export default function App() {
             </Text>
             {/* ternary = condition ? if true : if false. no dishes shows a msg, otherwise show the list */}
             {displayedItems.length === 0 ? (
-              <Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  color: "#555",
+                  marginTop: 20,
+                  fontSize: 18,
+                }}
+              >
                 {searchItem
                   ? `No matching dishes found.`
                   : `No menu items available. Please add a new dish.`}
@@ -326,7 +324,7 @@ export default function App() {
                     Price: R{item.price}
                   </Text>
                   <Text style={styles.itemDetailText}>
-                    Dish Type: {item.dishType}
+                    Dish Type: {dishTypes.find((type) => type.value === item.dishType)?.label || item.dishType}
                   </Text>
 
                   <TouchableOpacity
@@ -344,10 +342,6 @@ export default function App() {
                   </TouchableOpacity>
                 </View>
               ))
-            )}
-
-            {searchItem !== "" && displayedItems.length === 0 && (
-              <Text style={styles.emptyText}>No matching dishes found.</Text>
             )}
 
             {/* goes to the Details page and sends the dishes along with it */}
@@ -373,17 +367,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     paddingTop: 50,
-  },
-  searchBarInput: {
-    borderWidth: 1,
-    borderColor: "#ff506a",
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginHorizontal: 20,
-    marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: "#fff",
   },
   label: {
     fontWeight: "600",

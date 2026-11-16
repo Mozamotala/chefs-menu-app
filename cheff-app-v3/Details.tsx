@@ -9,6 +9,7 @@ import {
   getAveragePrice,
   SearchBar,
 } from "./resuable";
+import { Picker } from "@react-native-picker/picker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Details">;
 
@@ -26,6 +27,8 @@ export default function Details({ route }: Props) {
   // only the dishes that match the search (all of them if the search is empty)
   const results = searchDishes(menuItems, searchItem);
 
+  const [selectedType, setSelectedType] = useState("");
+
   return (
     // everything on screen lives inside this ScrollView so the page can scroll
     <ScrollView
@@ -34,6 +37,17 @@ export default function Details({ route }: Props) {
     >
       {/* search box (from resuable.tsx) - every letter typed updates searchItem */}
       <SearchBar value={searchItem} onChange={setSearchItem} />
+
+      <Picker
+        style={styles.pickerWrapper}
+        selectedValue={selectedType}
+        onValueChange={(itemValue) => setSelectedType(itemValue)}
+      >
+        <Picker.Item label="All Categories" value="" />
+        {dishTypes.map((type) => (
+          <Picker.Item key={type.value} label={type.label} value={type.value} />
+        ))}
+      </Picker>
 
       {/* summary card - total dishes and total value of the whole menu */}
       <View style={styles.card}>
@@ -51,6 +65,8 @@ export default function Details({ route }: Props) {
 
       {/* make one card per category */}
       {dishTypes.map((type) => {
+        if (selectedType && type.value !== selectedType) return null;
+
         // only the matching dishes in this category, plus their avg price
         const dishes = results.filter((item) => item.dishType === type.value);
         const average = getAveragePrice(dishes);
@@ -150,5 +166,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "#999",
     fontStyle: "italic",
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 20,
+    backgroundColor: "#fff",
+    overflow: "hidden",
   },
 });

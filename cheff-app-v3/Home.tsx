@@ -86,6 +86,23 @@ export default function App() {
   const displayedItems = searchDishes(menuItems, searchItem);
   // DELETE: removes one dish for good using its id
   const deleteMenuItem = async (idToDestroy: string) => {
+    const confirmDelete = await new Promise((resolve) => {
+      Alert.alert(
+        "Delete dish?",
+        "Are you sure you want to delete this dish? This action cannot be undone.",
+        [
+          { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: () => resolve(true),
+          },
+        ],
+      );
+    });
+
+    if (!confirmDelete) return;
+
     // keep every dish except the one i want gone
     const updatedList = menuItems.filter((item) => item.id !== idToDestroy);
 
@@ -324,7 +341,9 @@ export default function App() {
                     Price: R{item.price}
                   </Text>
                   <Text style={styles.itemDetailText}>
-                    Dish Type: {dishTypes.find((type) => type.value === item.dishType)?.label || item.dishType}
+                    Dish Type:{" "}
+                    {dishTypes.find((type) => type.value === item.dishType)
+                      ?.label || item.dishType}
                   </Text>
 
                   <TouchableOpacity

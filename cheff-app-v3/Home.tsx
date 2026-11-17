@@ -23,6 +23,7 @@ import {
   getAveragePrice,
   saveDishes,
   SearchBar,
+  MenuItem,
 } from "./reusable";
 
 // this is my main screen, where the chef adds, edits, deletes and searches dishes
@@ -37,7 +38,7 @@ export default function App() {
   const [dishType, setDishType] = useState("");
   const [price, setPrice] = useState("");
   const [completed, setCompleted] = useState(false); // shows the little green "added" msg
-  const [menuItems, setMenuItems] = useState<any[]>([]); // the full list of dishes
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]); // the full list of dishes
   const [searchItem, setSearchItem] = useState(""); // whats typed in the search bar
   // if this has an id, im editing that dish. if its null, im adding a new one
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -203,6 +204,11 @@ export default function App() {
                   alert("Please enter a valid number for the price.");
                   return;
                 }
+                // type check comes before the price confirm so the chef never confirms then gets told the type is missing
+                if (!dishType) {
+                  alert("Please select a dish type.");
+                  return;
+                }
                 // high price - ask the user to confirm, only carry on if they press Continue
                 if (Number(price) > 400) {
                   const message = `The price is R${price}. Are you sure about the price?`;
@@ -231,10 +237,6 @@ export default function App() {
                           );
                         });
                   if (!confirmed) return;
-                }
-                if (!dishType) {
-                  alert("Please select a dish type.");
-                  return;
                 }
 
                 setSuccessMessage(

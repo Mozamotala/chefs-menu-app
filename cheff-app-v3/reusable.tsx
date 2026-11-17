@@ -2,6 +2,16 @@
 import { StyleSheet, TextInput, View, Text, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// what one dish looks like - shared by Home, Details and navigation
+export interface MenuItem {
+  id: string;
+  name: string;
+  time: string;
+  description: string;
+  price: string;
+  dishType: string;
+}
+
 // the 4 dish types - value is what gets saved, label is what the chef sees
 // used by the Home picker and the Details cards so they always match
 export const dishTypes = [
@@ -13,24 +23,24 @@ export const dishTypes = [
 
 // SEARCH: gives back only the dishes whose name has the search text in it
 // ignores capitals and extra spaces. empty search = every dish
-export function searchDishes(dishes: any[], searchText: string) {
+export function searchDishes(dishes: MenuItem[], searchText: string) {
   return dishes.filter((dish) =>
     dish.name.toLowerCase().includes(searchText.toLowerCase().trim()),
   );
 }
 
 // TOTAL: adds up the price of every dish (bad prices count as 0)
-export function getTotalPrice(dishes: any[]) {
+export function getTotalPrice(dishes: MenuItem[]) {
   return dishes.reduce((sum, dish) => sum + (parseFloat(dish.price) || 0), 0);
 }
 
 // AVERAGE: total divided by how many dishes. 0 if there are none (no NaN)
-export function getAveragePrice(dishes: any[]) {
+export function getAveragePrice(dishes: MenuItem[]) {
   return dishes.length > 0 ? getTotalPrice(dishes) / dishes.length : 0;
 }
 
 // SAVE: stores the dish list on the phone so it's still there after closing the app
-export async function saveDishes(dishes: any[]) {
+export async function saveDishes(dishes: MenuItem[]) {
   await AsyncStorage.setItem("@dishes", JSON.stringify(dishes));
 }
 

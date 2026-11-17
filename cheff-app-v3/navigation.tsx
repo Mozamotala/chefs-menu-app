@@ -4,11 +4,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./Home";
 import Details from "./Details";
+import { MenuItem } from "./reusable";
 
 // lists my screens + what info each one needs. Home needs nothing, Details needs the dishes
 export type RootStackParamList = {
   Home: undefined;
-  Details: { menuItems: any[] };
+  Details: { menuItems: MenuItem[] };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

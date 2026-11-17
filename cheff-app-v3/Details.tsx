@@ -38,16 +38,18 @@ export default function Details({ route }: Props) {
       {/* search box (from reusable.tsx) - every letter typed updates searchItem */}
       <SearchBar value={searchItem} onChange={setSearchItem} />
 
-      <Picker
-        style={styles.pickerWrapper}
-        selectedValue={selectedType}
-        onValueChange={(itemValue) => setSelectedType(itemValue)}
-      >
-        <Picker.Item label="All Categories" value="" />
-        {dishTypes.map((type) => (
-          <Picker.Item key={type.value} label={type.label} value={type.value} />
-        ))}
-      </Picker>
+      <View style={styles.pickerWrapper}>
+        <Picker
+          style={styles.picker}
+          selectedValue={selectedType}
+          onValueChange={(itemValue) => setSelectedType(itemValue)}
+        >
+          <Picker.Item label="All Categories" value="" />
+          {dishTypes.map((type) => (
+            <Picker.Item key={type.value} label={type.label} value={type.value} />
+          ))}
+        </Picker>
+      </View>
 
       {/* summary card - total dishes and total value of the whole menu */}
       <View style={styles.card}>
@@ -174,5 +176,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#fff",
     overflow: "hidden",
+    padding: 3,
   },
 });

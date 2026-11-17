@@ -40,11 +40,13 @@ Navigation uses React Navigation (native stack): Home → Details.
 
 ## Tech stack
 
-- React Native 0.81 with Expo SDK 54
+- React Native 0.81 with Expo SDK 54 (React Native, n.d.; Expo, n.d.a)
 - TypeScript
 - React Navigation (native stack)
 - `@react-native-picker/picker` for the dish type dropdown
 - `@react-native-async-storage/async-storage` for saving the menu
+- React 19.1 (React, n.d.)
+- `react-native-screens` and `react-native-safe-area-context`, which React Navigation uses (React Native Screens, n.d.; React Native Safe Area Context, n.d.)
 
 ## How to run
 
@@ -191,7 +193,7 @@ After the fix I asked Claude Code (Anthropic, 2026d) to explain each change line
 The Details screen (`Details.tsx`) now has its own search box at the top. It works like this:
 
 1. **A state variable stores the search text.** `const [searchItem, setSearchItem] = useState("");` starts as an empty string, and the `TextInput` updates it every time a key is pressed.
-2. **The matching dishes are worked out once.** `const results = searchDishes(menuItems, searchItem);` uses the shared search function from `resuable.tsx` (see [Reusable functions](#reusable-functions)), so the Details screen searches in exactly the same way as the Home screen.
+2. **The matching dishes are worked out once.** `const results = searchDishes(menuItems, searchItem);` uses the shared search function from `reusable.tsx` (see [Reusable functions](#reusable-functions)), so the Details screen searches in exactly the same way as the Home screen.
 3. **Each dish type card filters its own dishes.** The screen uses `dishTypes.map(...)` to make one card per dish type. Inside each card, `results.filter((item) => item.dishType === type.value)` keeps only the matching dishes that belong to this dish type.
 4. **Cards with no matches are hidden.** `if (searchItem && dishes.length === 0) return null;` means: if the chef is searching and this dish type has no matching dishes, draw nothing for it. In React, returning `null` shows nothing.
 5. **A message is shown when nothing matches.** If something is typed and `results.length === 0`, "Cannot find any matching dishes." is shown.
@@ -227,7 +229,7 @@ The pop-up is wrapped in a `Promise` so the function waits for the chef's answer
 
 ### Reusable functions
 
-Code that both screens need is written once in `resuable.tsx` and imported where it is used:
+Code that both screens need is written once in `reusable.tsx` and imported where it is used:
 
 | Name | What it does | Used in |
 | ---- | ------------ | ------- |
@@ -246,12 +248,12 @@ The project was upgraded from Expo SDK 57 to SDK 58 (React Native 0.88) so it ru
 
 ### Moving back to Expo SDK 54
 
-On SDK 58 the splash screen only showed the app name and not my logo, so I added a loading screen with a delay in `navigation.tsx` to show the logo. I then moved the project back to Expo SDK 54 (React Native 0.81). On SDK 54 the `expo-splash-screen` plugin shows my logo as soon as the app launches, so the logo now appears without needing the loading screen.
+On SDK 58 the splash screen only showed the app name and not my logo, so I added a loading screen with a delay in `navigation.tsx` to show the logo. I then moved the project back to Expo SDK 54 (React Native 0.81). On SDK 54 the `expo-splash-screen` plugin (Expo, n.d.b) shows my logo as soon as the app launches, so the logo now appears without needing the loading screen.
 
 The downgrade also changed:
 
-- `expo-status-bar` was removed from the `plugins` list in `app.json`, because on SDK 54 it is not a config plugin.
-- `expo-system-ui` was added, so the light mode setting (`userInterfaceStyle`) in `app.json` works on Android.
+- `expo-status-bar` (Expo, n.d.c) was removed from the `plugins` list in `app.json`, because on SDK 54 it is not a config plugin.
+- `expo-system-ui` (Expo, n.d.d) was added, so the light mode setting (`userInterfaceStyle`) in `app.json` works on Android.
 
 ### Fixing the Details screen layout
 
@@ -298,6 +300,8 @@ Expo. n.d.a. Expo documentation. Available at: https://docs.expo.dev/ [Accessed:
 Expo. n.d.b. SplashScreen (expo-splash-screen). Available at: https://docs.expo.dev/versions/latest/sdk/splash-screen/ [Accessed: 17 November 2026].
 
 Expo. n.d.c. StatusBar (expo-status-bar). Available at: https://docs.expo.dev/versions/latest/sdk/status-bar/ [Accessed: 17 November 2026].
+
+Expo. n.d.d. SystemUI (expo-system-ui). Available at: https://docs.expo.dev/versions/latest/sdk/system-ui/ [Accessed: 17 November 2026].
 
 Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
 

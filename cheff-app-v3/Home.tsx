@@ -101,7 +101,6 @@ export default function App() {
             },
           },
         ],
-        
       );
     });
 
@@ -296,6 +295,19 @@ export default function App() {
                 {editingItemId ? "Save Changes" : "Submit"}
               </Text>
             </TouchableOpacity>
+
+            {/* only shows while editing - clears the form and leaves edit mode without saving */}
+            {editingItemId && (
+              <TouchableOpacity
+                style={[
+                  styles.submitButton,
+                  { backgroundColor: "#999", marginTop: 10 },
+                ]}
+                onPress={clearForm}
+              >
+                <Text style={styles.submitButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            )}
 
             {completed && (
               <View style={styles.completedContainer}>
@@ -522,5 +534,4 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  
 });

@@ -1,5 +1,5 @@
 // all my reusable stuff lives here - written once, used on the Home and Details screens
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, View, Text, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // the 4 dish types - value is what gets saved, label is what the chef sees
@@ -44,13 +44,24 @@ export function SearchBar({
   onChange: (text: string) => void;
 }) {
   return (
-    <TextInput
-      value={value}
-      style={styles.searchBar}
-      placeholder="Search dishes..."
-      placeholderTextColor="#888"
-      onChangeText={onChange}
-    />
+    // wrapper View so the ✕ can sit on top of the search box
+    <View>
+      <TextInput
+        value={value}
+        style={styles.searchBar}
+        placeholder="Search dishes..."
+        placeholderTextColor="#888"
+        onChangeText={onChange}
+      />
+      {/* ✕ only shows when something is typed - tapping it empties the search.
+          onChange("") is the same as the user deleting all the text,
+          so the screen goes back to showing every dish */}
+      {value !== "" && (
+        <TouchableOpacity style={styles.clearButton} onPress={() => onChange("")}>
+          <Text style={styles.clearButtonText}>✕</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }
 
@@ -64,5 +75,16 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     backgroundColor: "#fff",
+    paddingRight: 40, // room for the ✕ so text doesn't go under it
+  },
+  // the ✕ button - absolute so it floats inside the search box instead of under it
+  clearButton: {
+    position: "absolute",
+    right: 15, // distance from the right edge of the box
+    top: 10, // lines it up with the typed text
+  },
+  clearButtonText: {
+    fontSize: 18,
+    color: "#888", // same grey as the placeholder
   },
 });

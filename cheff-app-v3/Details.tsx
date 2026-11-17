@@ -27,6 +27,7 @@ export default function Details({ route }: Props) {
   // only the dishes that match the search (all of them if the search is empty)
   const results = searchDishes(menuItems, searchItem);
 
+  // which category is picked in the filter. "" = All Categories
   const [selectedType, setSelectedType] = useState("");
 
   return (
@@ -38,6 +39,8 @@ export default function Details({ route }: Props) {
       {/* search box (from reusable.tsx) - every letter typed updates searchItem */}
       <SearchBar value={searchItem} onChange={setSearchItem} />
 
+      {/* category filter - the View draws the rounded border because the
+          Picker itself ignores border styles on Android */}
       <View style={styles.pickerWrapper}>
         <Picker
           style={styles.picker}
@@ -67,6 +70,7 @@ export default function Details({ route }: Props) {
 
       {/* make one card per category */}
       {dishTypes.map((type) => {
+        // if a category is picked, skip every other category's card
         if (selectedType && type.value !== selectedType) return null;
 
         // only the matching dishes in this category, plus their avg price

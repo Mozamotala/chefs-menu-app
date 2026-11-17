@@ -40,7 +40,7 @@ Navigation uses React Navigation (native stack): Home → Details.
 
 ## Tech stack
 
-- React Native 0.88 with Expo SDK 58
+- React Native 0.81 with Expo SDK 54
 - TypeScript
 - React Navigation (native stack)
 - `@react-native-picker/picker` for the dish type dropdown
@@ -244,6 +244,15 @@ This means a change (for example, adding a new dish type) only has to be made in
 
 The project was upgraded from Expo SDK 57 to SDK 58 (React Native 0.88) so it runs on the current version of Expo Go.
 
+### Moving back to Expo SDK 54
+
+On SDK 58 the splash screen only showed the app name and not my logo, so I added a loading screen with a delay in `navigation.tsx` to show the logo. I then moved the project back to Expo SDK 54 (React Native 0.81). On SDK 54 the `expo-splash-screen` plugin shows my logo as soon as the app launches, so the logo now appears without needing the loading screen.
+
+The downgrade also changed:
+
+- `expo-status-bar` was removed from the `plugins` list in `app.json`, because on SDK 54 it is not a config plugin.
+- `expo-system-ui` was added, so the light mode setting (`userInterfaceStyle`) in `app.json` works on Android.
+
 ### Fixing the Details screen layout
 
 My first attempt at the Details search put the new `TextInput` and results list above the `return`, and then before the `<ScrollView>`. Nothing showed up and the file stopped working. I used Claude Code (Anthropic, 2026e) to help me understand why:
@@ -257,7 +266,7 @@ I also asked Claude Code to explain `.map`, `.filter`, `.reduce`, `.length`, `ty
 ## Design decisions and changes from Part 1
 
 - **Dish types.** The app uses four dish types: Appetizer, Main Course, Dessert and Beverage. My Part 1 design used three courses, and I added Beverage and used the label "Appetizer" because more variety makes it easier for the chef to organise the menu. The picker, the menu cards and the Details screen all use the same four types.
-- **Splash screen.** While the app starts up, my chef-hat logo is shown on a plain white splash screen. It is set up with the `expo-splash-screen` plugin in `app.json`, using my app icon (`icon.png`). In `navigation.tsx` I also added a small screen with a delay that displays my app icon for 1.5 seconds before the Home screen opens.
+- **Splash screen.** While the app starts up, my chef-hat logo is shown on a plain white splash screen. It is set up with the `expo-splash-screen` plugin in `app.json`, using my app icon (`icon.png`). In `navigation.tsx` I also added a small screen with a delay that displays my app icon for 1.5 seconds before the Home screen opens. I added it because on SDK 58 the splash screen did not show my logo. Since moving back to SDK 54, the splash screen shows the logo on its own (see "Moving back to Expo SDK 54").
 - **Messages.** Validation errors, the high price confirmation and the success message tell the chef what happened after every action.
 - **Display screen.** In my Part 1 design I made a monolith design, which is a one-page design: the full app was hosted on one page. In Part 3 I have added a new screen, the Details page. The Details page displays all the user's added menu items and has a search bar and a picker for a filter. This picker allows users to select the dish type. When a dish type is selected, it hides the dish types that do not apply and displays only the ones of the selected type.
 
@@ -284,6 +293,12 @@ Anthropic. 2026f. Claude (Sonnet 5.5). [Large language model]. Available at: htt
 
 Anthropic. 2026g. Claude Code (Opus 5.5). [Large language model]. Used to update this README so it describes the Part 3 changes. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 16 November 2026].
 
+Expo. n.d.a. Expo documentation. Available at: https://docs.expo.dev/ [Accessed: 17 November 2026].
+
+Expo. n.d.b. SplashScreen (expo-splash-screen). Available at: https://docs.expo.dev/versions/latest/sdk/splash-screen/ [Accessed: 17 November 2026].
+
+Expo. n.d.c. StatusBar (expo-status-bar). Available at: https://docs.expo.dev/versions/latest/sdk/status-bar/ [Accessed: 17 November 2026].
+
 Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
 
 Google. 2026b. What is the command to install the splash screen on react native. [Google Search]. Available at: https://www.google.com/search?q=what+is+the+command+to+install+the+splash+screen+on+react+native [Accessed: 11 October 2026].
@@ -292,9 +307,17 @@ The Independent Institute of Education (IIE). 2026a. Guidelines for responsible 
 
 The Independent Institute of Education (IIE). 2026b. Harvard-Anglia style reference guide — adapted for The IIE. [pdf] The Independent Institute of Education. Available at: IIE internal resource [Accessed: 12 October 2026].
 
+React. n.d. React documentation. Available at: https://react.dev/ [Accessed: 17 November 2026].
+
+React Native. n.d. React Native documentation. Available at: https://reactnative.dev/docs/getting-started [Accessed: 17 November 2026].
+
 React Native Async Storage. n.d. Install. Available at: https://react-native-async-storage.github.io/async-storage/docs/install/ [Accessed: 11 October 2026].
 
 React Native Community. n.d. @react-native-picker/picker. Available at: https://github.com/react-native-picker/picker [Accessed: 11 October 2026].
+
+React Native Safe Area Context. n.d. react-native-safe-area-context. Available at: https://github.com/AppAndFlow/react-native-safe-area-context [Accessed: 17 November 2026].
+
+React Native Screens. n.d. react-native-screens. Available at: https://github.com/software-mansion/react-native-screens [Accessed: 17 November 2026].
 
 React Navigation. n.d. Getting started. Available at: https://reactnavigation.org/docs/getting-started [Accessed: 11 October 2026].
 
@@ -315,6 +338,10 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | Whole of Part 3 (hints and feedback) | Claude (Anthropic, 2026f) | Hints and feedback only: checking my Part 3 work against the rubric and pointing out what was missing (filter by course, reusable functions) and small problems in my Details screen search. Claude did not write my app code. | 3 November 2026 | https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 |
 | This README (Part 3 changes, features and tech stack) | Claude Code (Anthropic, 2026g) | Formatting only: updating the README so it describes my Part 3 code changes (dish type filter, delete confirmation, reusable functions, SDK upgrade). Claude Code did not write my app code. | 16 November 2026 | Screenshots in the `screenshots` folder |
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
+
+### How I reviewed and verified AI content
+
+I checked every Claude response to see if it matched, and I also checked it against my own knowledge. If Claude suggested something new, I asked it to explain it before I coded it myself. Any other information that Claude provided was referenced and not used.
 
 Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.
 

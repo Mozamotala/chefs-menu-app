@@ -1,5 +1,11 @@
 // all my reusable stuff lives here - written once, used on the Home and Details screens
-import { StyleSheet, TextInput, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // what one dish looks like - shared by Home, Details and navigation
@@ -67,7 +73,10 @@ export function SearchBar({
           onChange("") is the same as the user deleting all the text,
           so the screen goes back to showing every dish */}
       {value !== "" && (
-        <TouchableOpacity style={styles.clearButton} onPress={() => onChange("")}>
+        <TouchableOpacity
+          style={styles.clearButton}
+          onPress={() => onChange("")}
+        >
           <Text style={styles.clearButtonText}>✕</Text>
         </TouchableOpacity>
       )}

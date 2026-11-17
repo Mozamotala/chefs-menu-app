@@ -25,6 +25,8 @@ The app code is in the [`cheff-app-v3`](./cheff-app-v3) folder.
 - A summary line showing the number of dishes, the total price and the average price.
 - A Details screen (opened with the **Details** button) that groups dishes by type and shows a count and average price for each type.
 - Search by dish name, edit a dish, delete a dish.
+- **New in Part 3:** when the chef is editing a dish, a **Cancel** button shows under the form. Pressing it clears the form and stops editing, and nothing is saved.
+- **New in Part 3:** I added a **✕** button to the search box on both screens. It only shows when something is typed, and pressing it clears the search so all the dishes show again.
 - **New in Part 3:** before a dish is deleted, the chef is asked "Delete dish?" and can press **Cancel** to keep it or **Delete** to remove it.
 - **New in Part 3:** a search box on the Details screen. While the chef types, only the matching dishes are shown, and any dish type with no matches is hidden. If nothing matches, the message "Cannot find any matching dishes." is shown.
 - **New in Part 3:** a dish type filter on the Details screen. The chef can pick "All Categories" or one dish type, and only that dish type's card is shown.
@@ -160,7 +162,7 @@ This did not work, and I used an AI assistant (Claude) (Anthropic, 2026a) to hel
 
 The fix in `Home.tsx`:
 
-1. The checks for an empty price and for a valid number now run first.
+1. The checks for an empty price, a valid number and a dish type now run first. I moved the dish type check above the price pop-up, because before, the chef could press Continue on the price and only then get told to pick a dish type.
 2. If the price is over 400, the app shows a pop-up with two buttons, **Cancel** and **Continue**, and waits for the answer:
    - **Continue** saves the dish as normal, so the chef is not stuck with a R400 limit.
    - **Cancel** saves nothing and keeps the form filled in so the price can be changed.
@@ -196,10 +198,10 @@ The Details screen (`Details.tsx`) now has its own search box at the top. It wor
 2. **The matching dishes are worked out once.** `const results = searchDishes(menuItems, searchItem);` uses the shared search function from `reusable.tsx` (see [Reusable functions](#reusable-functions)), so the Details screen searches in exactly the same way as the Home screen.
 3. **Each dish type card filters its own dishes.** The screen uses `dishTypes.map(...)` to make one card per dish type. Inside each card, `results.filter((item) => item.dishType === type.value)` keeps only the matching dishes that belong to this dish type.
 4. **Cards with no matches are hidden.** `if (searchItem && dishes.length === 0) return null;` means: if the chef is searching and this dish type has no matching dishes, draw nothing for it. In React, returning `null` shows nothing.
-5. **A message is shown when nothing matches.** If something is typed and `results.length === 0`, "Cannot find any matching dishes." is shown.
+5. **A message is shown when nothing matches.** `visibleDishes` keeps only the dishes that match the search and the picked dish type. If something is typed and `visibleDishes.length === 0`, the app shows "Cannot find any matching dishes." when "All Categories" is picked. If a dish type is picked, the message says which one, for example `No Dessert dishes match "pasta".`
 6. **The average price per dish type** comes from `getAveragePrice(dishes)`, which adds up the prices with `.reduce` and divides by the number of dishes. If a dish type has no dishes, the average is 0, so the screen never shows "NaN".
 
-When the search box is empty, every dish matches, so all the cards are shown as normal. The Summary card always shows the totals for the whole menu, not only the search results.
+When the search box is empty, every dish matches, so all the cards are shown as normal. The Summary card shows the total dishes, the total value and the average price. It always uses the whole menu, not only the search results.
 
 ```
 type "cake" → setSearchItem("cake") → screen re-renders
@@ -233,12 +235,13 @@ Code that both screens need is written once in `reusable.tsx` and imported where
 
 | Name | What it does | Used in |
 | ---- | ------------ | ------- |
+| `MenuItem` | What one dish looks like (`id`, `name`, `time`, `description`, `price`, `dishType`). I use it instead of `any[]` so TypeScript can catch mistakes | Home, Details, navigation |
 | `dishTypes` | The four dish types (value saved, label shown) | Home picker, Details filter and cards |
 | `searchDishes(dishes, searchText)` | Keeps only dishes whose name contains the search text (ignores capitals and extra spaces) | Home, Details |
 | `getTotalPrice(dishes)` | Adds up all the prices (bad prices count as 0) | Home, Details |
 | `getAveragePrice(dishes)` | Total divided by the number of dishes, or 0 if there are none | Home, Details |
 | `saveDishes(dishes)` | Saves the list to the phone with AsyncStorage | Home |
-| `SearchBar` | The same search box component on both screens | Home, Details |
+| `SearchBar` | The same search box component on both screens, with a ✕ button that clears the search | Home, Details |
 
 This means a change (for example, adding a new dish type) only has to be made in one place.
 
@@ -295,6 +298,8 @@ Anthropic. 2026f. Claude (Sonnet 5.5). [Large language model]. Available at: htt
 
 Anthropic. 2026g. Claude Code (Opus 5.5). [Large language model]. Used to update this README so it describes the Part 3 changes. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 16 November 2026].
 
+Anthropic. 2026h. Claude Code (Opus 5.5). [Large language model]. Used to update this README so it describes my latest changes. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 18 November 2026].
+
 Expo. n.d.a. Expo documentation. Available at: https://docs.expo.dev/ [Accessed: 17 November 2026].
 
 Expo. n.d.b. SplashScreen (expo-splash-screen). Available at: https://docs.expo.dev/versions/latest/sdk/splash-screen/ [Accessed: 17 November 2026].
@@ -341,6 +346,8 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b |
 | Whole of Part 3 (hints and feedback) | Claude (Anthropic, 2026f) | Hints and feedback only: checking my Part 3 work against the rubric and pointing out what was missing (filter by course, reusable functions) and small problems in my Details screen search. Claude did not write my app code. | 3 November 2026 | https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 |
 | This README (Part 3 changes, features and tech stack) | Claude Code (Anthropic, 2026g) | Formatting only: updating the README so it describes my Part 3 code changes (dish type filter, delete confirmation, reusable functions, SDK upgrade). Claude Code did not write my app code. | 16 November 2026 | Screenshots in the `screenshots` folder |
+| This README (features, Part 3 changes and reusable functions) | Claude Code (Anthropic, 2026h) | Formatting only: updating the README so it describes my latest code changes (Cancel button when editing, ✕ button on the search, `MenuItem` type, average price and "no match" message on the Details screen). Claude Code did not write my app code.
+
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
 
 ### How I reviewed and verified AI content

@@ -56,7 +56,11 @@ export default function Details({ route }: Props) {
         >
           <Picker.Item label="All Categories" value="" />
           {dishTypes.map((type) => (
-            <Picker.Item key={type.value} label={type.label} value={type.value} />
+            <Picker.Item
+              key={type.value}
+              label={type.label}
+              value={type.value}
+            />
           ))}
         </Picker>
       </View>

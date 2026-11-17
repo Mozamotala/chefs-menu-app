@@ -8,7 +8,7 @@ import {
   getTotalPrice,
   getAveragePrice,
   SearchBar,
-} from "./resuable";
+} from "./reusable";
 import { Picker } from "@react-native-picker/picker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Details">;
@@ -35,7 +35,7 @@ export default function Details({ route }: Props) {
       style={styles.container}
       contentContainerStyle={styles.scrollContainer}
     >
-      {/* search box (from resuable.tsx) - every letter typed updates searchItem */}
+      {/* search box (from reusable.tsx) - every letter typed updates searchItem */}
       <SearchBar value={searchItem} onChange={setSearchItem} />
 
       <Picker
@@ -109,7 +109,7 @@ export default function Details({ route }: Props) {
               dishes.length === 0 && (
                 <Text style={styles.emptyText}>No dishes yet.</Text>
               )
-              /* .length is  reacts way of counting items so dish.lenght is leteraly how many dishes there are */
+              /* .length is  reacts way of counting items so dish.length is literally how many dishes there are */
             }
           </View>
         );

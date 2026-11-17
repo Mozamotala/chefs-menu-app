@@ -23,7 +23,7 @@ import {
   getAveragePrice,
   saveDishes,
   SearchBar,
-} from "./resuable";
+} from "./reusable";
 
 // this is my main screen, where the chef adds, edits, deletes and searches dishes
 export default function App() {
@@ -164,7 +164,7 @@ export default function App() {
                 style={styles.dishType}
               >
                 <Picker.Item label="Select a dish type" value="" />
-                {/* one option per dish type, from the shared list in resuable.tsx */}
+                {/* one option per dish type, from the shared list in reusable.tsx */}
                 {dishTypes.map((type) => (
                   <Picker.Item
                     key={type.value}

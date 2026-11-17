@@ -4,7 +4,7 @@
 **Assessment:** PoE Part 3 – Final PoE
 **Student:** Mohamed Zaeem Motala (ST10515004)
 
-> **Submission note:** this repository is my **PoE Part 3 (Final PoE)** submission. It builds on my Part 2 app (add and view menu items, with validation and feedback messages, plus search, edit and delete), and adds a search box to the Details screen. The changes made for Part 3 are listed under [Part 3 changes](#part-3-changes).
+> **Submission note:** this repository is my **PoE Part 3 (Final PoE)** submission. It builds on my Part 2 app (add and view menu items, with validation and feedback messages, plus search, edit and delete), and adds a search box and a dish type filter to the Details screen, a confirmation before a dish is deleted, and a shared file of reusable functions. The changes made for Part 3 are listed under [Part 3 changes](#part-3-changes).
 
 ## About the app
 
@@ -25,20 +25,22 @@ The app code is in the [`cheff-app-v3`](./cheff-app-v3) folder.
 - A summary line showing the number of dishes, the total price and the average price.
 - A Details screen (opened with the **Details** button) that groups dishes by type and shows a count and average price for each type.
 - Search by dish name, edit a dish, delete a dish.
+- **New in Part 3:** before a dish is deleted, the chef is asked "Delete dish?" and can press **Cancel** to keep it or **Delete** to remove it.
 - **New in Part 3:** a search box on the Details screen. While the chef types, only the matching dishes are shown, and any dish type with no matches is hidden. If nothing matches, the message "Cannot find any matching dishes." is shown.
+- **New in Part 3:** a dish type filter on the Details screen. The chef can pick "All Categories" or one dish type, and only that dish type's card is shown.
 
 ## Screens
 
 | Screen  | Purpose                                                              |
 | ------- | -------------------------------------------------------------------- |
 | Home    | Form for adding dishes, search bar, and the list of menu items       |
-| Details | Search bar, menu summary and dishes grouped by dish type             |
+| Details | Search bar, dish type filter, menu summary and dishes grouped by dish type |
 
 Navigation uses React Navigation (native stack): Home → Details.
 
 ## Tech stack
 
-- React Native 0.86 with Expo SDK 57
+- React Native 0.88 with Expo SDK 58
 - TypeScript
 - React Navigation (native stack)
 - `@react-native-picker/picker` for the dish type dropdown
@@ -49,8 +51,8 @@ Navigation uses React Navigation (native stack): Home → Details.
 1. Install [Node.js](https://nodejs.org/) and the Expo Go app on your Android phone (or set up an Android emulator).
 2. Clone the repo and go into the app folder:
    ```
-   git clone https://github.com/EMGPSD/mast5112-2026-part-2-st10515004.git
-   cd mast5112-2026-part-2-st10515004/cheff-app-v3
+   git clone https://github.com/EMGPSD/mast5112-2026-part-3-poe-st10515004.git
+   cd mast5112-2026-part-3-poe-st10515004/cheff-app-v3
    ```
 3. Install the dependencies:
    ```
@@ -189,12 +191,11 @@ After the fix I asked Claude Code (Anthropic, 2026d) to explain each change line
 The Details screen (`Details.tsx`) now has its own search box at the top. It works like this:
 
 1. **A state variable stores the search text.** `const [searchItem, setSearchItem] = useState("");` starts as an empty string, and the `TextInput` updates it every time a key is pressed.
-2. **Each dish type card filters its own dishes.** The screen uses `dishTypes.map(...)` to make one card per dish type. Inside each card, `.filter` keeps a dish only if both of these are true (`&&` means "and"):
-   - the dish belongs to this dish type (`item.dishType === type.value`)
-   - the dish name contains the search text (`.toLowerCase()` is used on both, so capital letters do not matter)
-3. **Cards with no matches are hidden.** `if (searchItem && dishes.length === 0) return null;` means: if the chef is searching and this dish type has no matching dishes, draw nothing for it. In React, returning `null` shows nothing.
-4. **A message is shown when nothing matches.** `.some(...)` checks whether at least one dish in the whole menu matches the search. If none do, "Cannot find any matching dishes." is shown.
-5. **The average price per dish type** is worked out with `.reduce`, which adds up the prices one dish at a time, then divides by the number of dishes (`dishes.length`). If a dish type has no dishes, the average is 0, so the screen never shows "NaN".
+2. **The matching dishes are worked out once.** `const results = searchDishes(menuItems, searchItem);` uses the shared search function from `resuable.tsx` (see [Reusable functions](#reusable-functions)), so the Details screen searches in exactly the same way as the Home screen.
+3. **Each dish type card filters its own dishes.** The screen uses `dishTypes.map(...)` to make one card per dish type. Inside each card, `results.filter((item) => item.dishType === type.value)` keeps only the matching dishes that belong to this dish type.
+4. **Cards with no matches are hidden.** `if (searchItem && dishes.length === 0) return null;` means: if the chef is searching and this dish type has no matching dishes, draw nothing for it. In React, returning `null` shows nothing.
+5. **A message is shown when nothing matches.** If something is typed and `results.length === 0`, "Cannot find any matching dishes." is shown.
+6. **The average price per dish type** comes from `getAveragePrice(dishes)`, which adds up the prices with `.reduce` and divides by the number of dishes. If a dish type has no dishes, the average is 0, so the screen never shows "NaN".
 
 When the search box is empty, every dish matches, so all the cards are shown as normal. The Summary card always shows the totals for the whole menu, not only the search results.
 
@@ -205,6 +206,44 @@ type "cake" → setSearchItem("cake") → screen re-renders
             → Dessert (1): Chocolate Cake
 ```
 
+### Filter by dish type on the Details screen
+
+Under the search box there is a dropdown (`Picker`) with "All Categories" and the four dish types.
+
+1. **A state variable stores the chosen dish type.** `const [selectedType, setSelectedType] = useState("");` starts empty, which means "All Categories".
+2. **The dropdown options come from the shared `dishTypes` list**, so they always match the Home screen picker.
+3. **Other dish types are skipped.** Inside `dishTypes.map(...)`, `if (selectedType && type.value !== selectedType) return null;` means: if a dish type is chosen and this card is a different one, draw nothing for it.
+
+The filter and the search work together. For example, choosing Dessert and typing "cake" shows only the Dessert card, with only the dishes that contain "cake".
+
+### Confirming before a dish is deleted
+
+Pressing **Delete Dish** on the Home screen used to remove the dish straight away. Now `deleteMenuItem` first shows a pop-up with `Alert.alert` titled "Delete dish?" with two buttons:
+
+- **Cancel** keeps the dish.
+- **Delete** removes it, updates the list and saves the new list with `saveDishes`.
+
+The pop-up is wrapped in a `Promise` so the function waits for the chef's answer. `if (!confirmDelete) return;` stops the delete when Cancel is pressed.
+
+### Reusable functions
+
+Code that both screens need is written once in `resuable.tsx` and imported where it is used:
+
+| Name | What it does | Used in |
+| ---- | ------------ | ------- |
+| `dishTypes` | The four dish types (value saved, label shown) | Home picker, Details filter and cards |
+| `searchDishes(dishes, searchText)` | Keeps only dishes whose name contains the search text (ignores capitals and extra spaces) | Home, Details |
+| `getTotalPrice(dishes)` | Adds up all the prices (bad prices count as 0) | Home, Details |
+| `getAveragePrice(dishes)` | Total divided by the number of dishes, or 0 if there are none | Home, Details |
+| `saveDishes(dishes)` | Saves the list to the phone with AsyncStorage | Home |
+| `SearchBar` | The same search box component on both screens | Home, Details |
+
+This means a change (for example, adding a new dish type) only has to be made in one place.
+
+### Upgrading to Expo SDK 58
+
+The project was upgraded from Expo SDK 57 to SDK 58 (React Native 0.88) so it runs on the current version of Expo Go.
+
 ### Fixing the Details screen layout
 
 My first attempt at the Details search put the new `TextInput` and results list above the `return`, and then before the `<ScrollView>`. Nothing showed up and the file stopped working. I used Claude Code (Anthropic, 2026e) to help me understand why:
@@ -213,13 +252,15 @@ My first attempt at the Details search put the new `TextInput` and results list 
 - A `return` can only hold **one** outer element. Here that element is the `<ScrollView>`, so everything else has to go inside it.
 - Inside JSX, comments have to be written as `{/* comment */}`, not `//`.
 
-I also asked Claude Code to explain `.map`, `.filter`, `.reduce`, `.length`, `type.value` and `item` in plain words, and to add comments to `Details.tsx` so I could follow the code.
+I also asked Claude Code to explain `.map`, `.filter`, `.reduce`, `.length`, `type.value` and `item` in plain words.
 
 ## Design decisions and changes from Part 1
 
 - **Dish types.** The app uses four dish types: Appetizer, Main Course, Dessert and Beverage. My Part 1 design used three courses, and I added Beverage and used the label "Appetizer" because more variety makes it easier for the chef to organise the menu. The picker, the menu cards and the Details screen all use the same four types.
-- **Splash screen.** While the app starts up, my chef-hat logo is shown on a plain white splash screen. It is set up with the `expo-splash-screen` plugin and the `splash-icon.png` image.
+- **Splash screen.** While the app starts up, my chef-hat logo is shown on a plain white splash screen. It is set up with the `expo-splash-screen` plugin in `app.json`, using my app icon (`icon.png`). In `navigation.tsx` I also added a small screen with a delay that displays my app icon for 1.5 seconds before the Home screen opens.
 - **Messages.** Validation errors, the high price confirmation and the success message tell the chef what happened after every action.
+- **Display screen.** In my Part 1 design I made a monolith design, which is a one-page design: the full app was hosted on one page. In Part 3 I have added a new screen, the Details page. The Details page displays all the user's added menu items and has a search bar and a picker for a filter. This picker allows users to select the dish type. When a dish type is selected, it hides the dish types that do not apply and displays only the ones of the selected type.
+
 
 ## Video demonstration
 
@@ -240,6 +281,8 @@ Anthropic. 2026d. Claude Code (Opus 5.5). [Large language model]. Screenshots of
 Anthropic. 2026e. Claude Code (Opus 5.5). [Large language model]. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 3 November 2026].
 
 Anthropic. 2026f. Claude (Sonnet 5.5). [Large language model]. Available at: https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 [Accessed: 3 November 2026].
+
+Anthropic. 2026g. Claude Code (Opus 5.5). [Large language model]. Used to update this README so it describes the Part 3 changes. Screenshots of the conversation are saved in the `screenshots` folder of this repository. [Accessed: 16 November 2026].
 
 Google. 2026a. Search results for installing `@react-native-async-storage/async-storage`, `@react-native-picker/picker` and React Navigation in an Expo project. [Google Search]. Available at: https://www.google.com [Accessed: 11 October 2026].
 
@@ -270,6 +313,7 @@ In line with the IIE Guidelines for responsible AI use (PDIIE023) (IIE, 2026a), 
 | Whole of Part 2 (brief, rubric and app review) | Claude (Anthropic, 2026b) | Understanding the assignment brief and helping to format my work. | 11 October 2026 | https://claude.ai/share/6830cd57-0ae1-4700-ba99-6ee67f2e0ea3 |
 | Whole of Part 2 (hints and feedback) and this README | Claude (Anthropic, 2026c) | Hints and feedback only: summarising the Part 2 brief and rubric, pointing out where my app did not match the brief or my Part 1 design, estimating how the rubric might be applied, and formatting the reference list and this annexure. Claude did not write my app code. I made the changes to my code myself. | 6 October 2026 and 12 October 2026 | https://claude.ai/share/397adc4e-30aa-4014-8a47-bbfb5ac11e7b |
 | Whole of Part 3 (hints and feedback) | Claude (Anthropic, 2026f) | Hints and feedback only: checking my Part 3 work against the rubric and pointing out what was missing (filter by course, reusable functions) and small problems in my Details screen search. Claude did not write my app code. | 3 November 2026 | https://claude.ai/share/13a4b6f5-76df-4055-99da-db5440d49549 |
+| This README (Part 3 changes, features and tech stack) | Claude Code (Anthropic, 2026g) | Formatting only: updating the README so it describes my Part 3 code changes (dish type filter, delete confirmation, reusable functions, SDK upgrade). Claude Code did not write my app code. | 16 November 2026 | Screenshots in the `screenshots` folder |
 | App icon and splash screen (`assets/` folder) | Grok (xAI, 2026) | Generating the chef logo. | 11 October 2026 | https://grok.com/share/c2hhcmQtNA_34351c59-14d1-4938-8152-8c70ba49f78a |
 
 Google Search and the official package documentation were used for installation steps (see References). They are not generative AI.

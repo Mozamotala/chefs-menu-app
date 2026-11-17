@@ -95,9 +95,13 @@ export default function App() {
           {
             text: "Delete",
             style: "destructive",
-            onPress: () => resolve(true),
+            onPress: () => {
+              resolve(true);
+              Alert.alert("Dish deleted successfully!");
+            },
           },
         ],
+        
       );
     });
 
@@ -518,4 +522,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  
 });

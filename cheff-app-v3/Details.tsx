@@ -21,6 +21,8 @@ export default function Details({ route }: Props) {
   // how many dishes there are, and their prices added up (bad prices count as 0)
   const totalItems = menuItems.length;
   const totalPrice = getTotalPrice(menuItems);
+  // average price of every dish on the menu (0 if there are none)
+  const averagePrice = getAveragePrice(menuItems);
 
   // search text typed by the user, used to filter dishes by name
   const [searchItem, setSearchItem] = useState("");
@@ -29,6 +31,12 @@ export default function Details({ route }: Props) {
 
   // which category is picked in the filter. "" = All Categories
   const [selectedType, setSelectedType] = useState("");
+  // dishes that pass BOTH the search and the category filter
+  const visibleDishes = selectedType
+    ? results.filter((item) => item.dishType === selectedType)
+    : results;
+  // the picked category's name for the message, e.g. "Dessert"
+  const selectedLabel = dishTypes.find((t) => t.value === selectedType)?.label;
 
   return (
     // everything on screen lives inside this ScrollView so the page can scroll
@@ -43,7 +51,6 @@ export default function Details({ route }: Props) {
           Picker itself ignores border styles on Android */}
       <View style={styles.pickerWrapper}>
         <Picker
-          style={styles.picker}
           selectedValue={selectedType}
           onValueChange={(itemValue) => setSelectedType(itemValue)}
         >
@@ -54,18 +61,25 @@ export default function Details({ route }: Props) {
         </Picker>
       </View>
 
-      {/* summary card - total dishes and total value of the whole menu */}
+      {/* summary card - total dishes, total value and average price of the whole menu */}
       <View style={styles.card}>
         <Text style={styles.sectionHeader}>Summary</Text>
         <Text style={styles.itemDetailText}>Total dishes: {totalItems}</Text>
         <Text style={styles.itemDetailText}>
           Total value: R{totalPrice.toFixed(2)}
         </Text>
+        <Text style={styles.itemDetailText}>
+          Average price: R{averagePrice.toFixed(2)}
+        </Text>
       </View>
 
-      {/* if something is typed but no dish name matches, show a message */}
-      {searchItem.trim() !== "" && results.length === 0 && (
-        <Text style={styles.emptyText}>Cannot find any matching dishes.</Text>
+      {/* if something is typed but nothing passes the search + category filter, say why */}
+      {searchItem.trim() !== "" && visibleDishes.length === 0 && (
+        <Text style={styles.emptyText}>
+          {selectedLabel
+            ? `No ${selectedLabel} dishes match "${searchItem.trim()}".`
+            : "Cannot find any matching dishes."}
+        </Text>
       )}
 
       {/* make one card per category */}

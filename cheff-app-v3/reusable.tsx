@@ -22,9 +22,9 @@ export interface MenuItem {
 // used by the Home picker and the Details cards so they always match
 export const dishTypes = [
   { value: "appetizer", label: "Appetizer" },
-  { value: "mainCourse", label: "Main Course" },
-  { value: "dessert", label: "Dessert" },
   { value: "beverage", label: "Beverage" },
+  { value: "dessert", label: "Dessert" },
+  { value: "mainCourse", label: "Main Course" },
 ];
 
 // SEARCH: gives back only the dishes whose name has the search text in it

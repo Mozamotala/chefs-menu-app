@@ -278,7 +278,7 @@ I also asked Claude Code to explain `.map`, `.filter`, `.reduce`, `.length`, `ty
 
 ## Video demonstration
 
-YouTube (Unlisted): https://youtu.be/IrK2ZIFfQ-o
+YouTube (Unlisted): https://youtu.be/wU6-bf8nZvg
 
 ## References
 

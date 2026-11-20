@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /cheff-app-v3
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    # Expo pins almost every package (react, react-native, expo-*, and native
+    # libraries like react-native-screens) to the versions its SDK is tested
+    # with. Those are upgraded together with `npx expo install --fix` when
+    # moving to a new SDK. Dependabot only handles React Navigation, which
+    # Expo doesn't pin.
+    allow:
+      - dependency-name: "@react-navigation/*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      react-navigation:
+        patterns: ["@react-navigation/*"]
+        update-types: [minor, patch]
